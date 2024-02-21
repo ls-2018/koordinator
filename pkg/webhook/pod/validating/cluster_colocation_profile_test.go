@@ -443,6 +443,19 @@ func TestClusterColocationProfileValidatingPod(t *testing.T) {
 			wantAllowed: false,
 			wantReason:  `pod.spec.containers[*].resources.requests: Invalid value: "100m": the requested CPUs of LSR Pod must be integer`,
 		},
+		{
+			name:      "forbidden resources annotations",
+			operation: admissionv1.Create,
+			newPod: &corev1.Pod{
+				ObjectMeta: metav1.ObjectMeta{
+					Annotations: map[string]string{
+						extension.AnnotationReservationAllocated: "",
+					},
+				},
+			},
+			wantAllowed: false,
+			wantReason:  `annotations.scheduling.koordinator.sh/reservation-allocated: Required value: cannot specify reservation allocated in annotations`,
+		},
 	}
 
 	for _, tt := range tests {

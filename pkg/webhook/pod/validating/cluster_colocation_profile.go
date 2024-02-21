@@ -55,6 +55,7 @@ func (h *PodValidatingHandler) clusterColocationProfileValidatingPod(ctx context
 	}
 
 	allErrs = append(allErrs, validateRequiredQoSClass(newPod)...)
+	allErrs = append(allErrs, forbidReservationAnnotations(newPod)...)
 	allErrs = append(allErrs, forbidSpecialQoSClassAndPriorityClass(newPod, extension.QoSBE, extension.PriorityNone, extension.PriorityProd)...)
 	allErrs = append(allErrs, forbidSpecialQoSClassAndPriorityClass(newPod, extension.QoSLSR, extension.PriorityNone, extension.PriorityMid, extension.PriorityBatch, extension.PriorityFree)...)
 	allErrs = append(allErrs, validateResources(newPod)...)
@@ -66,6 +67,16 @@ func (h *PodValidatingHandler) clusterColocationProfileValidatingPod(ctx context
 		reason = err.Error()
 	}
 	return allowed, reason, nil
+}
+
+func forbidReservationAnnotations(pod *corev1.Pod) field.ErrorList {
+	if pod.Annotations == nil {
+		return nil
+	}
+	if _, ok := pod.Annotations[extension.AnnotationReservationAllocated]; ok {
+		return field.ErrorList{field.Required(field.NewPath("annotations", extension.AnnotationReservationAllocated), "cannot specify reservation allocated in annotations")}
+	}
+	return nil
 }
 
 func validateRequiredQoSClass(pod *corev1.Pod) field.ErrorList {
