@@ -20,16 +20,16 @@ import (
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/record"
 
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metriccache"
-	ma "github.com/koordinator-sh/koordinator/pkg/koordlet/metricsadvisor/framework"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metriccache"
+	ma "github.com/koordinator-sh/koordinator/pkg/koordlet/over_metricsadvisor/over_framework"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/resourceexecutor"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
 )
 
 type Options struct {
 	CgroupReader        resourceexecutor.CgroupReader
-	StatesInformer      statesinformer.StatesInformer
-	MetricCache         metriccache.MetricCache
+	StatesInformer      over_statesinformer.StatesInformer
+	MetricCache         over_metriccache.MetricCache
 	EventRecorder       record.EventRecorder
 	KubeClient          clientset.Interface
 	EvictVersion        string

@@ -27,8 +27,8 @@ import (
 	"k8s.io/component-base/featuregate"
 	"k8s.io/klog/v2"
 
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metriccache"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metriccache"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 )
 
 var (
@@ -53,7 +53,7 @@ func RegisterQOSExtPlugin(feature featuregate.Feature, featureSpec featuregate.F
 
 type ExtensionPlugin interface {
 	InitFlags(fs *flag.FlagSet)
-	Setup(client clientset.Interface, metricCache metriccache.MetricCache, statesInformer statesinformer.StatesInformer)
+	Setup(client clientset.Interface, metricCache over_metriccache.MetricCache, statesInformer over_statesinformer.StatesInformer)
 	Run(stopCh <-chan struct{})
 }
 
@@ -71,7 +71,7 @@ func (c *QOSExtensionConfig) InitFlags(fs *flag.FlagSet) {
 			"Options are:\n"+strings.Join(DefaultMutableQOSExtPluginFG.KnownFeatures(), "\n"))
 }
 
-func SetupPlugins(client clientset.Interface, metricCache metriccache.MetricCache, statesInformer statesinformer.StatesInformer) {
+func SetupPlugins(client clientset.Interface, metricCache over_metriccache.MetricCache, statesInformer over_statesinformer.StatesInformer) {
 	for f, plugin := range globalExtensionPlugins {
 		plugin.Setup(client, metricCache, statesInformer)
 		klog.V(4).Infof("setup for qos extension plugin %v", f)

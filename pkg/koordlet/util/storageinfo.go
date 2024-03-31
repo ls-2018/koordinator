@@ -52,21 +52,21 @@ var (
 	lvsRE     = regexp.MustCompile(`[^\s]+`)
 	findmntRE = regexp.MustCompile(`([A-Z:]+)=(?:"(.*?)")`)
 
-	lsblkColumns = []string{
+	LsblkColumns = []string{
 		"NAME",
 		"TYPE",
 		"MAJ:MIN",
 	}
-	vgsColumns = []string{
+	VgsColumns = []string{
 		"vg_name",
 		"pv_count",
 		"pv_name",
 	}
-	lvsColumns = []string{
+	LvsColumns = []string{
 		"lv_name",
 		"vg_name",
 	}
-	findmntColumns = []string{
+	FindmntColumns = []string{
 		"TARGET",
 		"SOURCE",
 	}
@@ -78,7 +78,7 @@ func (s *LocalStorageInfo) scanDevices() error {
 	lsblkCommand := exec.Command(
 		"lsblk",
 		"-P", // output fields as key=value pairs
-		"-o", strings.Join(lsblkColumns, ","),
+		"-o", strings.Join(LsblkColumns, ","),
 	)
 	output, err := lsblkCommand.Output()
 	if err != nil {
@@ -91,7 +91,7 @@ func (s *LocalStorageInfo) scanVolumeGroups() error {
 	vgsCommand := exec.Command(
 		"vgs",
 		"--noheadings",
-		"--options", strings.Join(vgsColumns, ","),
+		"--options", strings.Join(VgsColumns, ","),
 	)
 	output, err := vgsCommand.Output()
 	if err != nil {
@@ -104,7 +104,7 @@ func (s *LocalStorageInfo) scanLogicalVolumes() error {
 	lvsCommand := exec.Command(
 		"lvs",
 		"--noheadings",
-		"--options", strings.Join(lvsColumns, ","),
+		"--options", strings.Join(LvsColumns, ","),
 	)
 	output, err := lvsCommand.Output()
 	if err != nil {
@@ -117,7 +117,7 @@ func (s *LocalStorageInfo) scanMountPoints() error {
 	findmntCommand := exec.Command(
 		"findmnt",
 		"-P",
-		"-o", strings.Join(findmntColumns, ","),
+		"-o", strings.Join(FindmntColumns, ","),
 	)
 	output, err := findmntCommand.Output()
 	if err != nil {

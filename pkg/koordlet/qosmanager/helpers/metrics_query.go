@@ -23,15 +23,14 @@ import (
 	"k8s.io/klog/v2"
 
 	slov1alpha1 "github.com/koordinator-sh/koordinator/apis/slo/v1alpha1"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metriccache"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metriccache"
 )
 
 var (
 	timeNow = time.Now
 )
 
-func CollectorNodeMetricLast(metricCache metriccache.MetricCache, queryMeta metriccache.MetricMeta, metricCollectInterval time.Duration) (float64, error) {
+func CollectorNodeMetricLast(metricCache over_metriccache.MetricCache, queryMeta over_metriccache.MetricMeta, metricCollectInterval time.Duration) (float64, error) {
 	queryParam := GenerateQueryParamsLast(metricCollectInterval * 2)
 	result, err := CollectNodeMetrics(metricCache, *queryParam.Start, *queryParam.End, queryMeta)
 	if err != nil {
@@ -40,27 +39,27 @@ func CollectorNodeMetricLast(metricCache metriccache.MetricCache, queryMeta metr
 	return result.Value(queryParam.Aggregate)
 }
 
-func CollectNodeMetrics(metricCache metriccache.MetricCache, start, end time.Time, queryMeta metriccache.MetricMeta) (metriccache.AggregateResult, error) {
+func CollectNodeMetrics(metricCache over_metriccache.MetricCache, start, end time.Time, queryMeta over_metriccache.MetricMeta) (over_metriccache.AggregateResult, error) {
 	querier, err := metricCache.Querier(start, end)
 	if err != nil {
 		return nil, err
 	}
 
-	aggregateResult := metriccache.DefaultAggregateResultFactory.New(queryMeta)
+	aggregateResult := over_metriccache.DefaultAggregateResultFactory.New(queryMeta)
 	if err := querier.Query(queryMeta, nil, aggregateResult); err != nil {
 		return nil, err
 	}
 	return aggregateResult, nil
 }
 
-func CollectAllHostAppMetricsLast(hostApps []slov1alpha1.HostApplicationSpec, metricCache metriccache.MetricCache,
-	metricResource metriccache.MetricResource, metricCollectInterval time.Duration) map[string]float64 {
+func CollectAllHostAppMetricsLast(hostApps []slov1alpha1.HostApplicationSpec, metricCache over_metriccache.MetricCache,
+	metricResource over_metriccache.MetricResource, metricCollectInterval time.Duration) map[string]float64 {
 	queryParam := GenerateQueryParamsLast(metricCollectInterval * 2)
 	return CollectAllHostAppMetrics(hostApps, metricCache, *queryParam, metricResource)
 }
 
-func CollectAllHostAppMetrics(hostApps []slov1alpha1.HostApplicationSpec, metricCache metriccache.MetricCache,
-	queryParam metriccache.QueryParam, metricResource metriccache.MetricResource) map[string]float64 {
+func CollectAllHostAppMetrics(hostApps []slov1alpha1.HostApplicationSpec, metricCache over_metriccache.MetricCache,
+	queryParam over_metriccache.QueryParam, metricResource over_metriccache.MetricResource) map[string]float64 {
 	appsMetrics := make(map[string]float64)
 	querier, err := metricCache.Querier(*queryParam.Start, *queryParam.End)
 	if err != nil {
@@ -68,12 +67,12 @@ func CollectAllHostAppMetrics(hostApps []slov1alpha1.HostApplicationSpec, metric
 		return appsMetrics
 	}
 	for _, hostApp := range hostApps {
-		queryMeta, err := metricResource.BuildQueryMeta(metriccache.MetricPropertiesFunc.HostApplication(hostApp.Name))
+		queryMeta, err := metricResource.BuildQueryMeta(over_metriccache.MetricPropertiesFunc.HostApplication(hostApp.Name))
 		if err != nil || queryMeta == nil {
 			klog.Warningf("build host application %s query meta failed, kind: %s, error: %v", hostApp.Name, queryMeta, err)
 			continue
 		}
-		aggregateResult := metriccache.DefaultAggregateResultFactory.New(queryMeta)
+		aggregateResult := over_metriccache.DefaultAggregateResultFactory.New(queryMeta)
 		if err := querier.Query(queryMeta, nil, aggregateResult); err != nil {
 			klog.Warningf("query host application %s metric failed, kind: %s, error: %v", hostApp.Name, queryMeta.GetKind(), err)
 			continue
@@ -92,42 +91,7 @@ func CollectAllHostAppMetrics(hostApps []slov1alpha1.HostApplicationSpec, metric
 	return appsMetrics
 }
 
-func CollectAllPodMetricsLast(statesInformer statesinformer.StatesInformer, metricCache metriccache.MetricCache,
-	metricResource metriccache.MetricResource, metricCollectInterval time.Duration) map[string]float64 {
-	queryParam := GenerateQueryParamsLast(metricCollectInterval * 2)
-	return CollectAllPodMetrics(statesInformer, metricCache, *queryParam, metricResource)
-}
-
-func CollectAllPodMetrics(statesInformer statesinformer.StatesInformer, metricCache metriccache.MetricCache,
-	queryParam metriccache.QueryParam, metricResource metriccache.MetricResource) map[string]float64 {
-	podsMeta := statesInformer.GetAllPods()
-	podsMetrics := make(map[string]float64)
-	for _, podMeta := range podsMeta {
-		queryMeta, err := metricResource.BuildQueryMeta(metriccache.MetricPropertiesFunc.Pod(string(podMeta.Pod.UID)))
-		if err != nil {
-			klog.Warningf("build pod %s/%s query meta failed, kind: %s, error: %v", podMeta.Pod.Namespace, podMeta.Pod.Name, queryMeta.GetKind(), err)
-			continue
-		}
-		podQueryResult, err := CollectPodMetric(metricCache, queryMeta, *queryParam.Start, *queryParam.End)
-		if err != nil {
-			klog.Warningf("query pod %s/%s metric failed, kind: %s, error: %v", podMeta.Pod.Namespace, podMeta.Pod.Name, queryMeta.GetKind(), err)
-			continue
-		}
-		if podQueryResult.Count() == 0 {
-			klog.V(5).Infof("query pod %s/%s metric is empty, kind: %s", podMeta.Pod.Namespace, podMeta.Pod.Name, queryMeta.GetKind())
-			continue
-		}
-		value, err := podQueryResult.Value(queryParam.Aggregate)
-		if err != nil {
-			klog.Warningf("aggregate pod %s/%s metric failed, kind: %s, error: %v", podMeta.Pod.Namespace, podMeta.Pod.Name, queryMeta.GetKind(), err)
-			continue
-		}
-		podsMetrics[string(podMeta.Pod.UID)] = value
-	}
-	return podsMetrics
-}
-
-func CollectPodMetricLast(metricCache metriccache.MetricCache, queryMeta metriccache.MetricMeta,
+func CollectPodMetricLast(metricCache over_metriccache.MetricCache, queryMeta over_metriccache.MetricMeta,
 	metricCollectInterval time.Duration) (float64, error) {
 	queryParam := GenerateQueryParamsLast(metricCollectInterval * 2)
 	result, err := CollectPodMetric(metricCache, queryMeta, *queryParam.Start, *queryParam.End)
@@ -137,34 +101,34 @@ func CollectPodMetricLast(metricCache metriccache.MetricCache, queryMeta metricc
 	return result.Value(queryParam.Aggregate)
 }
 
-func CollectPodMetric(metricCache metriccache.MetricCache, queryMeta metriccache.MetricMeta, start, end time.Time) (metriccache.AggregateResult, error) {
+func CollectPodMetric(metricCache over_metriccache.MetricCache, queryMeta over_metriccache.MetricMeta, start, end time.Time) (over_metriccache.AggregateResult, error) {
 	querier, err := metricCache.Querier(start, end)
 	if err != nil {
 		return nil, err
 	}
-	aggregateResult := metriccache.DefaultAggregateResultFactory.New(queryMeta)
+	aggregateResult := over_metriccache.DefaultAggregateResultFactory.New(queryMeta)
 	if err := querier.Query(queryMeta, nil, aggregateResult); err != nil {
 		return nil, err
 	}
 	return aggregateResult, nil
 }
 
-func CollectContainerResMetricLast(metricCache metriccache.MetricCache, queryMeta metriccache.MetricMeta,
+func CollectContainerResMetricLast(metricCache over_metriccache.MetricCache, queryMeta over_metriccache.MetricMeta,
 	metricCollectInterval time.Duration) (float64, error) {
 	queryParam := GenerateQueryParamsLast(metricCollectInterval * 2)
 	querier, err := metricCache.Querier(*queryParam.Start, *queryParam.End)
 	if err != nil {
 		return 0, err
 	}
-	aggregateResult := metriccache.DefaultAggregateResultFactory.New(queryMeta)
+	aggregateResult := over_metriccache.DefaultAggregateResultFactory.New(queryMeta)
 	if err := querier.Query(queryMeta, nil, aggregateResult); err != nil {
 		return 0, err
 	}
 	return aggregateResult.Value(queryParam.Aggregate)
 }
 
-func CollectContainerThrottledMetric(metricCache metriccache.MetricCache, containerID *string,
-	metricCollectInterval time.Duration) (metriccache.AggregateResult, error) {
+func CollectContainerThrottledMetric(metricCache over_metriccache.MetricCache, containerID *string,
+	metricCollectInterval time.Duration) (over_metriccache.AggregateResult, error) {
 	if containerID == nil {
 		return nil, fmt.Errorf("container is nil")
 	}
@@ -176,13 +140,13 @@ func CollectContainerThrottledMetric(metricCache metriccache.MetricCache, contai
 		return nil, err
 	}
 
-	queryParam := metriccache.MetricPropertiesFunc.Container(*containerID)
-	queryMeta, err := metriccache.ContainerCPUThrottledMetric.BuildQueryMeta(queryParam)
+	queryParam := over_metriccache.MetricPropertiesFunc.Container(*containerID)
+	queryMeta, err := over_metriccache.ContainerCPUThrottledMetric.BuildQueryMeta(queryParam)
 	if err != nil {
 		return nil, err
 	}
 
-	aggregateResult := metriccache.DefaultAggregateResultFactory.New(queryMeta)
+	aggregateResult := over_metriccache.DefaultAggregateResultFactory.New(queryMeta)
 	if err := querier.Query(queryMeta, nil, aggregateResult); err != nil {
 		return nil, err
 	}
@@ -190,35 +154,35 @@ func CollectContainerThrottledMetric(metricCache metriccache.MetricCache, contai
 	return aggregateResult, nil
 }
 
-func GenerateQueryParamsAvg(windowDuration time.Duration) *metriccache.QueryParam {
+func GenerateQueryParamsAvg(windowDuration time.Duration) *over_metriccache.QueryParam {
 	end := time.Now()
 	start := end.Add(-windowDuration)
-	queryParam := &metriccache.QueryParam{
-		Aggregate: metriccache.AggregationTypeAVG,
+	queryParam := &over_metriccache.QueryParam{
+		Aggregate: over_metriccache.AggregationTypeAVG,
 		Start:     &start,
 		End:       &end,
 	}
 	return queryParam
 }
 
-func GenerateQueryParamsLast(windowDuration time.Duration) *metriccache.QueryParam {
+func GenerateQueryParamsLast(windowDuration time.Duration) *over_metriccache.QueryParam {
 	end := time.Now()
 	start := end.Add(-windowDuration)
-	queryParam := &metriccache.QueryParam{
-		Aggregate: metriccache.AggregationTypeLast,
+	queryParam := &over_metriccache.QueryParam{
+		Aggregate: over_metriccache.AggregationTypeLast,
 		Start:     &start,
 		End:       &end,
 	}
 	return queryParam
 }
 
-func Query(querier metriccache.Querier, resource metriccache.MetricResource, properties map[metriccache.MetricProperty]string) (metriccache.AggregateResult, error) {
+func Query(querier over_metriccache.Querier, resource over_metriccache.MetricResource, properties map[over_metriccache.MetricProperty]string) (over_metriccache.AggregateResult, error) {
 	queryMeta, err := resource.BuildQueryMeta(properties)
 	if err != nil {
 		return nil, err
 	}
 
-	aggregateResult := metriccache.DefaultAggregateResultFactory.New(queryMeta)
+	aggregateResult := over_metriccache.DefaultAggregateResultFactory.New(queryMeta)
 	if err := querier.Query(queryMeta, nil, aggregateResult); err != nil {
 		return nil, err
 	}

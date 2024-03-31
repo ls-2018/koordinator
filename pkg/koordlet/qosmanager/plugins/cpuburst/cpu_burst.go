@@ -19,7 +19,7 @@ package cpuburst
 import (
 	"encoding/json"
 	"fmt"
-
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"math/rand"
 	"strconv"
 	"time"
@@ -31,15 +31,14 @@ import (
 	apiext "github.com/koordinator-sh/koordinator/apis/extension"
 	slov1alpha1 "github.com/koordinator-sh/koordinator/apis/slo/v1alpha1"
 	"github.com/koordinator-sh/koordinator/pkg/features"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/audit"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metriccache"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metrics"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_audit"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metriccache"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metrics"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/framework"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/helpers"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/resourceexecutor"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
 	koordletutil "github.com/koordinator-sh/koordinator/pkg/koordlet/util"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"github.com/koordinator-sh/koordinator/pkg/util"
 )
 
@@ -167,8 +166,8 @@ var _ framework.QOSStrategy = &cpuBurst{}
 type cpuBurst struct {
 	reconcileInterval     time.Duration
 	metricCollectInterval time.Duration
-	statesInformer        statesinformer.StatesInformer
-	metricCache           metriccache.MetricCache
+	statesInformer        over_statesinformer.StatesInformer
+	metricCache           over_metriccache.MetricCache
 	executor              resourceexecutor.ResourceUpdateExecutor
 	cgroupReader          resourceexecutor.CgroupReader
 	nodeCPUBurstStrategy  *slov1alpha1.CPUBurstStrategy
@@ -207,7 +206,7 @@ func (b *cpuBurst) init(stopCh <-chan struct{}) {
 func (b *cpuBurst) start() {
 	klog.V(5).Infof("start cpu burst strategy")
 	// at the beginning of appling cpu burst strategy, we should reset all metrics belongs to pods and containers
-	metrics.ResetCPUBurstCollector()
+	over_metrics.ResetCPUBurstCollector()
 	// sync config from node slo
 	nodeSLO := b.statesInformer.GetNodeSLO()
 	if nodeSLO == nil || nodeSLO.Spec.CPUBurstStrategy == nil {
@@ -257,11 +256,11 @@ func (b *cpuBurst) start() {
 // getNodeStateForBurst checks whether node share pool cpu usage beyonds the threshold
 // return isOverload, share pool usage ratio and message detail
 func (b *cpuBurst) getNodeStateForBurst(sharePoolThresholdPercent int64,
-	podsMeta []*statesinformer.PodMeta) nodeStateForBurst {
+	podsMeta []*over_statesinformer.PodMeta) nodeStateForBurst {
 	overloadMetricDuration := time.Duration(util.MinInt64(int64(b.reconcileInterval*5), int64(10*time.Second)))
 	queryParam := helpers.GenerateQueryParamsAvg(overloadMetricDuration)
 
-	queryMeta, err := metriccache.NodeCPUUsageMetric.BuildQueryMeta(nil)
+	queryMeta, err := over_metriccache.NodeCPUUsageMetric.BuildQueryMeta(nil)
 	if err != nil {
 		klog.Warningf("get node metric queryMeta failed, error: %v", err)
 		return nodeBurstUnknown
@@ -280,17 +279,17 @@ func (b *cpuBurst) getNodeStateForBurst(sharePoolThresholdPercent int64,
 		klog.Warningf("get node cpu metric failed, error: %v", err)
 	}
 
-	nodeCPUInfoRaw, exist := b.metricCache.Get(metriccache.NodeCPUInfoKey)
+	nodeCPUInfoRaw, exist := b.metricCache.Get(over_metriccache.NodeCPUInfoKey)
 	if !exist {
 		klog.Warning("get node cpu info failed : not exist")
 		return nodeBurstUnknown
 	}
-	nodeCPUInfo := nodeCPUInfoRaw.(*metriccache.NodeCPUInfo)
+	nodeCPUInfo := nodeCPUInfoRaw.(*over_metriccache.NodeCPUInfo)
 	if nodeCPUInfo == nil {
 		klog.Warning("get node cpu info failed : value is nil")
 		return nodeBurstUnknown
 	}
-	podMetricMap := helpers.CollectAllPodMetrics(b.statesInformer, b.metricCache, *queryParam, metriccache.PodCPUUsageMetric)
+	podMetricMap := helpers.CollectAllPodMetrics(b.statesInformer, b.metricCache, *queryParam, over_metriccache.PodCPUUsageMetric)
 
 	nodeCPUCoresTotal := len(nodeCPUInfo.ProcessorInfos)
 	nodeCPUCoresUsage := nodeCPUUsed
@@ -338,7 +337,7 @@ func (b *cpuBurst) getNodeStateForBurst(sharePoolThresholdPercent int64,
 }
 
 // scale cpu.cfs_quota_us for pod/containers by container throttled state and node state
-func (b *cpuBurst) applyCFSQuotaBurst(burstCfg *slov1alpha1.CPUBurstConfig, podMeta *statesinformer.PodMeta,
+func (b *cpuBurst) applyCFSQuotaBurst(burstCfg *slov1alpha1.CPUBurstConfig, podMeta *over_statesinformer.PodMeta,
 	nodeState nodeStateForBurst) {
 	pod := podMeta.Pod
 	containerMap := make(map[string]*corev1.Container)
@@ -415,7 +414,7 @@ func (b *cpuBurst) applyCFSQuotaBurst(burstCfg *slov1alpha1.CPUBurstConfig, podM
 				pod.Namespace, pod.Name, containerStat.Name, finalOperation, deltaContainerCFS, err)
 			continue
 		}
-		metrics.RecordContainerScaledCFSQuotaUS(pod.Namespace, pod.Name, containerStat.ContainerID, containerStat.Name, float64(containerTargetCFS))
+		over_metrics.RecordContainerScaledCFSQuotaUS(pod.Namespace, pod.Name, containerStat.ContainerID, containerStat.Name, float64(containerTargetCFS))
 		klog.Infof("scale container %v/%v/%v cfs quota success, operation %v, current cfs %v, target cfs %v",
 			pod.Namespace, pod.Name, containerStat.Name, finalOperation, containerCurCFS, containerTargetCFS)
 	} // end for containers
@@ -436,7 +435,7 @@ func (b *cpuBurst) cfsBurstAllowedByLimiter(burstCfg *slov1alpha1.CPUBurstConfig
 	containerCPULimit := float64(util.GetContainerMilliCPULimit(container)) / 1000
 	containerCPUUsage := containerCPULimit
 
-	querMeta, err := metriccache.ContainerCPUUsageMetric.BuildQueryMeta(metriccache.MetricPropertiesFunc.Container(*containerID))
+	querMeta, err := over_metriccache.ContainerCPUUsageMetric.BuildQueryMeta(over_metriccache.MetricPropertiesFunc.Container(*containerID))
 	if err != nil {
 		klog.Warningf("get container %s metric queryMeta failed, error: %v", *containerID, err)
 	} else {
@@ -484,7 +483,7 @@ func (b *cpuBurst) genOperationByContainer(burstCfg *slov1alpha1.CPUBurstConfig,
 		return cfsRemain
 	}
 
-	containerThrottledLastValue, err := containerThrottled.Value(metriccache.AggregationTypeLast)
+	containerThrottledLastValue, err := containerThrottled.Value(over_metriccache.AggregationTypeLast)
 	if err != nil {
 		klog.V(4).Infof("failed to get container %s/%s/%s last throttled metric, skip this round, reason %v",
 			pod.Namespace, pod.Name, containerStat.Name, err)
@@ -499,7 +498,7 @@ func (b *cpuBurst) genOperationByContainer(burstCfg *slov1alpha1.CPUBurstConfig,
 	return cfsRemain
 }
 
-func (b *cpuBurst) applyContainerCFSQuota(podMeta *statesinformer.PodMeta, containerStat *corev1.ContainerStatus,
+func (b *cpuBurst) applyContainerCFSQuota(podMeta *over_statesinformer.PodMeta, containerStat *corev1.ContainerStatus,
 	curContaienrCFS, deltaContainerCFS int64) error {
 	podDir := podMeta.CgroupDir
 	curPodCFS, podPathErr := b.cgroupReader.ReadCPUQuota(podDir)
@@ -521,7 +520,7 @@ func (b *cpuBurst) applyContainerCFSQuota(podMeta *statesinformer.PodMeta, conta
 
 		targetPodCFS := curPodCFS + deltaContainerCFS
 		podCFSValStr := strconv.FormatInt(targetPodCFS, 10)
-		eventHelper := audit.V(3).Pod(podMeta.Pod.Namespace, podMeta.Pod.Name).Reason("CFSQuotaBurst").Message("update pod CFSQuota: %v", podCFSValStr)
+		eventHelper := over_audit.V(3).Pod(podMeta.Pod.Namespace, podMeta.Pod.Name).Reason("CFSQuotaBurst").Message("update pod CFSQuota: %v", podCFSValStr)
 		updater, _ := resourceexecutor.DefaultCgroupUpdaterFactory.New(system.CPUCFSQuotaName, podDir, podCFSValStr, eventHelper)
 		if _, err := b.executor.Update(true, updater); err != nil {
 			return fmt.Errorf("update pod cgroup %v failed, error %v", podMeta.CgroupDir, err)
@@ -533,7 +532,7 @@ func (b *cpuBurst) applyContainerCFSQuota(podMeta *statesinformer.PodMeta, conta
 	updateContainerCFSQuota := func() error {
 		targetContainerCFS := curContaienrCFS + deltaContainerCFS
 		containerCFSValStr := strconv.FormatInt(targetContainerCFS, 10)
-		eventHelper := audit.V(3).Container(containerStat.Name).Reason("CFSQuotaBurst").Message("update container CFSQuota: %v", containerCFSValStr)
+		eventHelper := over_audit.V(3).Container(containerStat.Name).Reason("CFSQuotaBurst").Message("update container CFSQuota: %v", containerCFSValStr)
 		updater, _ := resourceexecutor.DefaultCgroupUpdaterFactory.New(system.CPUCFSQuotaName, containerDir, containerCFSValStr, eventHelper)
 		if _, err := b.executor.Update(true, updater); err != nil {
 			return fmt.Errorf("update container cgroup %v failed, reason %v", containerDir, err)
@@ -559,7 +558,7 @@ func (b *cpuBurst) applyContainerCFSQuota(podMeta *statesinformer.PodMeta, conta
 }
 
 // set cpu.cfs_burst_us for containers
-func (b *cpuBurst) applyCPUBurst(burstCfg *slov1alpha1.CPUBurstConfig, podMeta *statesinformer.PodMeta) {
+func (b *cpuBurst) applyCPUBurst(burstCfg *slov1alpha1.CPUBurstConfig, podMeta *over_statesinformer.PodMeta) {
 	pod := podMeta.Pod
 	containerMap := make(map[string]*corev1.Container)
 	for i := range pod.Spec.Containers {
@@ -592,7 +591,7 @@ func (b *cpuBurst) applyCPUBurst(burstCfg *slov1alpha1.CPUBurstConfig, podMeta *
 
 		podCFSBurstVal += containerCFSBurstVal
 		containerCFSBurstValStr := strconv.FormatInt(containerCFSBurstVal, 10)
-		eventHelper := audit.V(3).Container(containerStat.Name).Reason("CPUBurst").Message("update container CPUBurst: %v", containerCFSBurstValStr)
+		eventHelper := over_audit.V(3).Container(containerStat.Name).Reason("CPUBurst").Message("update container CPUBurst: %v", containerCFSBurstValStr)
 		updater, err := resourceexecutor.DefaultCgroupUpdaterFactory.New(system.CPUBurstName, containerDir, containerCFSBurstValStr, eventHelper)
 		if err != nil { // normally cpu burst resource not supported on current system
 			klog.V(5).Infof("get cpu burst updater for container %s/%s/%s failed, maybe system unsupported, err: %v",
@@ -607,7 +606,7 @@ func (b *cpuBurst) applyCPUBurst(burstCfg *slov1alpha1.CPUBurstConfig, podMeta *
 			klog.V(4).Infof("update container %v/%v/%v cpu burst failed, dir %v, updated %v, err %v",
 				pod.Namespace, pod.Name, containerStat.Name, containerDir, updated, err)
 		} else {
-			metrics.RecordContainerScaledCFSBurstUS(pod.Namespace, pod.Name, containerStat.ContainerID, containerStat.Name, float64(containerCFSBurstVal))
+			over_metrics.RecordContainerScaledCFSBurstUS(pod.Namespace, pod.Name, containerStat.ContainerID, containerStat.Name, float64(containerCFSBurstVal))
 			klog.V(5).Infof("apply container %v/%v/%v cpu burst value successfully, dir %v, value %v",
 				pod.Namespace, pod.Name, containerStat.Name, containerDir, containerCFSBurstVal)
 		}
@@ -615,7 +614,7 @@ func (b *cpuBurst) applyCPUBurst(burstCfg *slov1alpha1.CPUBurstConfig, podMeta *
 
 	podDir := podMeta.CgroupDir
 	podCFSBurstValStr := strconv.FormatInt(podCFSBurstVal, 10)
-	eventHelper := audit.V(3).Pod(podMeta.Pod.Namespace, podMeta.Pod.Name).Reason("CPUBurst").Message("update pod CFSQuota: %v", podCFSBurstValStr)
+	eventHelper := over_audit.V(3).Pod(podMeta.Pod.Namespace, podMeta.Pod.Name).Reason("CPUBurst").Message("update pod CFSQuota: %v", podCFSBurstValStr)
 	updater, err := resourceexecutor.DefaultCgroupUpdaterFactory.New(system.CPUBurstName, podDir, podCFSBurstValStr, eventHelper)
 	if err != nil { // normally cpu burst resource not supported on current system
 		klog.V(5).Infof("get cpu burst updater for pod %s/%s failed, maybe system unsupported, err: %v",

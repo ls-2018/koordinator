@@ -19,14 +19,13 @@ package handler
 import (
 	"context"
 	"fmt"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
-
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 )
 
 const (

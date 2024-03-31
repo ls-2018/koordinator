@@ -1,0 +1,2391 @@
+{
+     "numberCPUs": 64,
+     "coreToCPU": {
+        "0": [
+           {
+              "cpu": 0,
+              "core": 0,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "0",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 32,
+              "core": 0,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "0",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "1": [
+           {
+              "cpu": 1,
+              "core": 1,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "1",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 33,
+              "core": 1,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "1",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "10": [
+           {
+              "cpu": 10,
+              "core": 10,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "10",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 42,
+              "core": 10,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "10",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "11": [
+           {
+              "cpu": 11,
+              "core": 11,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "11",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 43,
+              "core": 11,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "11",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "12": [
+           {
+              "cpu": 12,
+              "core": 12,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "12",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 44,
+              "core": 12,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "12",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "13": [
+           {
+              "cpu": 13,
+              "core": 13,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "13",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 45,
+              "core": 13,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "13",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "14": [
+           {
+              "cpu": 14,
+              "core": 14,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "14",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 46,
+              "core": 14,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "14",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "15": [
+           {
+              "cpu": 15,
+              "core": 15,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "15",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 47,
+              "core": 15,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "15",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "16": [
+           {
+              "cpu": 16,
+              "core": 16,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "16",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 48,
+              "core": 16,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "16",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "17": [
+           {
+              "cpu": 17,
+              "core": 17,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "17",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 49,
+              "core": 17,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "17",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "18": [
+           {
+              "cpu": 18,
+              "core": 18,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "18",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 50,
+              "core": 18,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "18",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "19": [
+           {
+              "cpu": 19,
+              "core": 19,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "19",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 51,
+              "core": 19,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "19",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "2": [
+           {
+              "cpu": 2,
+              "core": 2,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "2",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 34,
+              "core": 2,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "2",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "20": [
+           {
+              "cpu": 20,
+              "core": 20,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "20",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 52,
+              "core": 20,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "20",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "21": [
+           {
+              "cpu": 21,
+              "core": 21,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "21",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 53,
+              "core": 21,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "21",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "22": [
+           {
+              "cpu": 22,
+              "core": 22,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "22",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 54,
+              "core": 22,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "22",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "23": [
+           {
+              "cpu": 23,
+              "core": 23,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "23",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 55,
+              "core": 23,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "23",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "24": [
+           {
+              "cpu": 24,
+              "core": 24,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "24",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 56,
+              "core": 24,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "24",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "25": [
+           {
+              "cpu": 25,
+              "core": 25,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "25",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 57,
+              "core": 25,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "25",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "26": [
+           {
+              "cpu": 26,
+              "core": 26,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "26",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 58,
+              "core": 26,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "26",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "27": [
+           {
+              "cpu": 27,
+              "core": 27,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "27",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 59,
+              "core": 27,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "27",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "28": [
+           {
+              "cpu": 28,
+              "core": 28,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "28",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 60,
+              "core": 28,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "28",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "29": [
+           {
+              "cpu": 29,
+              "core": 29,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "29",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 61,
+              "core": 29,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "29",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "3": [
+           {
+              "cpu": 3,
+              "core": 3,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "3",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 35,
+              "core": 3,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "3",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "30": [
+           {
+              "cpu": 30,
+              "core": 30,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "30",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 62,
+              "core": 30,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "30",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "31": [
+           {
+              "cpu": 31,
+              "core": 31,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "31",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 63,
+              "core": 31,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "31",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "4": [
+           {
+              "cpu": 4,
+              "core": 4,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "4",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 36,
+              "core": 4,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "4",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "5": [
+           {
+              "cpu": 5,
+              "core": 5,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "5",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 37,
+              "core": 5,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "5",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "6": [
+           {
+              "cpu": 6,
+              "core": 6,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "6",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 38,
+              "core": 6,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "6",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "7": [
+           {
+              "cpu": 7,
+              "core": 7,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "7",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 39,
+              "core": 7,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "7",
+              "l3": 1,
+              "online": "yes"
+           }
+        ],
+        "8": [
+           {
+              "cpu": 8,
+              "core": 8,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "8",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 40,
+              "core": 8,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "8",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "9": [
+           {
+              "cpu": 9,
+              "core": 9,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "9",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 41,
+              "core": 9,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "9",
+              "l3": 1,
+              "online": "yes"
+           }
+        ]
+     },
+     "nodeToCPU": {
+        "0": [
+           {
+              "cpu": 0,
+              "core": 0,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "0",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 32,
+              "core": 0,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "0",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 2,
+              "core": 2,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "2",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 34,
+              "core": 2,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "2",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 4,
+              "core": 4,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "4",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 36,
+              "core": 4,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "4",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 6,
+              "core": 6,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "6",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 38,
+              "core": 6,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "6",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 8,
+              "core": 8,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "8",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 40,
+              "core": 8,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "8",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 10,
+              "core": 10,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "10",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 42,
+              "core": 10,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "10",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 12,
+              "core": 12,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "12",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 44,
+              "core": 12,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "12",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 14,
+              "core": 14,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "14",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 46,
+              "core": 14,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "14",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 16,
+              "core": 16,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "16",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 48,
+              "core": 16,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "16",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 18,
+              "core": 18,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "18",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 50,
+              "core": 18,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "18",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 20,
+              "core": 20,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "20",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 52,
+              "core": 20,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "20",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 22,
+              "core": 22,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "22",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 54,
+              "core": 22,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "22",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 24,
+              "core": 24,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "24",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 56,
+              "core": 24,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "24",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 26,
+              "core": 26,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "26",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 58,
+              "core": 26,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "26",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 28,
+              "core": 28,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "28",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 60,
+              "core": 28,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "28",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 30,
+              "core": 30,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "30",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 62,
+              "core": 30,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "30",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "1": [
+           {
+              "cpu": 1,
+              "core": 1,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "1",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 33,
+              "core": 1,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "1",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 3,
+              "core": 3,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "3",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 35,
+              "core": 3,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "3",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 5,
+              "core": 5,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "5",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 37,
+              "core": 5,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "5",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 7,
+              "core": 7,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "7",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 39,
+              "core": 7,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "7",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 9,
+              "core": 9,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "9",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 41,
+              "core": 9,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "9",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 11,
+              "core": 11,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "11",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 43,
+              "core": 11,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "11",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 13,
+              "core": 13,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "13",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 45,
+              "core": 13,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "13",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 15,
+              "core": 15,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "15",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 47,
+              "core": 15,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "15",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 17,
+              "core": 17,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "17",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 49,
+              "core": 17,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "17",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 19,
+              "core": 19,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "19",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 51,
+              "core": 19,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "19",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 21,
+              "core": 21,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "21",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 53,
+              "core": 21,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "21",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 23,
+              "core": 23,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "23",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 55,
+              "core": 23,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "23",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 25,
+              "core": 25,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "25",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 57,
+              "core": 25,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "25",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 27,
+              "core": 27,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "27",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 59,
+              "core": 27,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "27",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 29,
+              "core": 29,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "29",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 61,
+              "core": 29,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "29",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 31,
+              "core": 31,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "31",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 63,
+              "core": 31,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "31",
+              "l3": 1,
+              "online": "yes"
+           }
+        ]
+     },
+     "socketToCPU": {
+        "0": [
+           {
+              "cpu": 0,
+              "core": 0,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "0",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 32,
+              "core": 0,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "0",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 2,
+              "core": 2,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "2",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 34,
+              "core": 2,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "2",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 4,
+              "core": 4,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "4",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 36,
+              "core": 4,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "4",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 6,
+              "core": 6,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "6",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 38,
+              "core": 6,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "6",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 8,
+              "core": 8,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "8",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 40,
+              "core": 8,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "8",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 10,
+              "core": 10,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "10",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 42,
+              "core": 10,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "10",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 12,
+              "core": 12,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "12",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 44,
+              "core": 12,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "12",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 14,
+              "core": 14,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "14",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 46,
+              "core": 14,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "14",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 16,
+              "core": 16,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "16",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 48,
+              "core": 16,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "16",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 18,
+              "core": 18,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "18",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 50,
+              "core": 18,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "18",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 20,
+              "core": 20,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "20",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 52,
+              "core": 20,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "20",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 22,
+              "core": 22,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "22",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 54,
+              "core": 22,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "22",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 24,
+              "core": 24,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "24",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 56,
+              "core": 24,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "24",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 26,
+              "core": 26,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "26",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 58,
+              "core": 26,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "26",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 28,
+              "core": 28,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "28",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 60,
+              "core": 28,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "28",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 30,
+              "core": 30,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "30",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 62,
+              "core": 30,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "30",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "1": [
+           {
+              "cpu": 1,
+              "core": 1,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "1",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 33,
+              "core": 1,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "1",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 3,
+              "core": 3,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "3",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 35,
+              "core": 3,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "3",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 5,
+              "core": 5,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "5",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 37,
+              "core": 5,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "5",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 7,
+              "core": 7,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "7",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 39,
+              "core": 7,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "7",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 9,
+              "core": 9,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "9",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 41,
+              "core": 9,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "9",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 11,
+              "core": 11,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "11",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 43,
+              "core": 11,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "11",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 13,
+              "core": 13,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "13",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 45,
+              "core": 13,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "13",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 15,
+              "core": 15,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "15",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 47,
+              "core": 15,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "15",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 17,
+              "core": 17,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "17",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 49,
+              "core": 17,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "17",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 19,
+              "core": 19,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "19",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 51,
+              "core": 19,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "19",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 21,
+              "core": 21,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "21",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 53,
+              "core": 21,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "21",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 23,
+              "core": 23,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "23",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 55,
+              "core": 23,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "23",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 25,
+              "core": 25,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "25",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 57,
+              "core": 25,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "25",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 27,
+              "core": 27,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "27",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 59,
+              "core": 27,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "27",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 29,
+              "core": 29,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "29",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 61,
+              "core": 29,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "29",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 31,
+              "core": 31,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "31",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 63,
+              "core": 31,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "31",
+              "l3": 1,
+              "online": "yes"
+           }
+        ]
+     },
+     "l3ToCPU": {
+        "0": [
+           {
+              "cpu": 0,
+              "core": 0,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "0",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 32,
+              "core": 0,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "0",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 2,
+              "core": 2,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "2",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 34,
+              "core": 2,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "2",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 4,
+              "core": 4,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "4",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 36,
+              "core": 4,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "4",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 6,
+              "core": 6,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "6",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 38,
+              "core": 6,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "6",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 8,
+              "core": 8,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "8",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 40,
+              "core": 8,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "8",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 10,
+              "core": 10,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "10",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 42,
+              "core": 10,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "10",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 12,
+              "core": 12,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "12",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 44,
+              "core": 12,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "12",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 14,
+              "core": 14,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "14",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 46,
+              "core": 14,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "14",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 16,
+              "core": 16,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "16",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 48,
+              "core": 16,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "16",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 18,
+              "core": 18,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "18",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 50,
+              "core": 18,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "18",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 20,
+              "core": 20,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "20",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 52,
+              "core": 20,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "20",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 22,
+              "core": 22,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "22",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 54,
+              "core": 22,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "22",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 24,
+              "core": 24,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "24",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 56,
+              "core": 24,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "24",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 26,
+              "core": 26,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "26",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 58,
+              "core": 26,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "26",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 28,
+              "core": 28,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "28",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 60,
+              "core": 28,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "28",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 30,
+              "core": 30,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "30",
+              "l3": 0,
+              "online": "yes"
+           },
+           {
+              "cpu": 62,
+              "core": 30,
+              "socket": 0,
+              "node": 0,
+              "l1dl1il2": "30",
+              "l3": 0,
+              "online": "yes"
+           }
+        ],
+        "1": [
+           {
+              "cpu": 1,
+              "core": 1,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "1",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 33,
+              "core": 1,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "1",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 3,
+              "core": 3,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "3",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 35,
+              "core": 3,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "3",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 5,
+              "core": 5,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "5",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 37,
+              "core": 5,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "5",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 7,
+              "core": 7,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "7",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 39,
+              "core": 7,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "7",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 9,
+              "core": 9,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "9",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 41,
+              "core": 9,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "9",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 11,
+              "core": 11,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "11",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 43,
+              "core": 11,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "11",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 13,
+              "core": 13,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "13",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 45,
+              "core": 13,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "13",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 15,
+              "core": 15,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "15",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 47,
+              "core": 15,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "15",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 17,
+              "core": 17,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "17",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 49,
+              "core": 17,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "17",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 19,
+              "core": 19,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "19",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 51,
+              "core": 19,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "19",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 21,
+              "core": 21,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "21",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 53,
+              "core": 21,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "21",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 23,
+              "core": 23,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "23",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 55,
+              "core": 23,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "23",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 25,
+              "core": 25,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "25",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 57,
+              "core": 25,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "25",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 27,
+              "core": 27,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "27",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 59,
+              "core": 27,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "27",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 29,
+              "core": 29,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "29",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 61,
+              "core": 29,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "29",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 31,
+              "core": 31,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "31",
+              "l3": 1,
+              "online": "yes"
+           },
+           {
+              "cpu": 63,
+              "core": 31,
+              "socket": 1,
+              "node": 1,
+              "l1dl1il2": "31",
+              "l3": 1,
+              "online": "yes"
+           }
+        ]
+     }
+  }

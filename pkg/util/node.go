@@ -17,7 +17,6 @@ limitations under the License.
 package util
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -149,16 +148,6 @@ func TrimNodeAllocatableByNodeReservation(node *corev1.Node) (trimmedAllocatable
 	trimmedAllocatable[apiext.BatchCPU] = allocatable[apiext.BatchCPU]
 	trimmed = !quotav1.Equals(allocatable, trimmedAllocatable)
 	return
-}
-
-func GetNodeAnnoReservedJson(reserved apiext.NodeReservation) string {
-	result := ""
-	resultBytes, err := json.Marshal(&reserved)
-	if err == nil {
-		result = string(resultBytes)
-	}
-
-	return result
 }
 
 func GetNodeAllocatableBatchMilliCPU(node *corev1.Node) int64 {

@@ -54,6 +54,7 @@ func NewPerfCollector(cgroupFile *os.File, cpus []int) (*PerfCollector, error) {
 
 		collector.cpuHwProfilersMap[cpu] = &cpiProfiler
 	}
+	collector.collect()
 	return collector, nil
 }
 

@@ -18,14 +18,13 @@ package runtime
 
 import (
 	"fmt"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"os"
 	"sync"
 
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/runtime/handler"
 
 	"k8s.io/klog/v2"
-
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 )
 
 var (

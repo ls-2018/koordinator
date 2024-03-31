@@ -1,0 +1,56 @@
+apiVersion: scheduling.koordinator.sh/v1alpha1
+kind: Reservation
+metadata:
+  name: reservation-demo
+spec:
+  template: # set resource requirements
+    namespace: default
+    spec:
+      containers:
+        - name: c
+          image: centos:7
+          command:
+            - "/bin/bash"
+            - "-c"
+            - "sleep 1h"
+          resources:
+            requests:
+              cpu: "1"
+              memory: "1G"
+            limits:
+              cpu: "1"
+              memory: "1G"
+      schedulerName: koord-scheduler # use koord-scheduler
+  owners: # set the owner specifications
+    - object: # owner pods whose name is `default/pod-demo-0`
+        name: c
+        namespace: default
+  ttl: 1h # set the TTL, the reservation will get expired 1 hour later
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: c
+  labels:
+    app: c
+spec:
+  containers:
+    - name: c
+      image: centos:7
+      env:
+        - name: "X"
+          value: ""
+      command:
+        - "/bin/bash"
+        - "-c"
+        - "sleep 1h"
+#      resources:
+#        requests:
+#          cpu: "1"
+#          memory: "1G"
+#        limits:
+#          cpu: "1"
+#          memory: "1G"
+      imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+  schedulerName: koord-scheduler

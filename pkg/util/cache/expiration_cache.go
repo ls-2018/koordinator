@@ -52,21 +52,6 @@ func NewCacheDefault() *Cache {
 	}
 }
 
-func NewCache(expiration time.Duration, gcInterval time.Duration) *Cache {
-	cache := Cache{
-		items:             map[string]item{},
-		defaultExpiration: expiration,
-		gcInterval:        gcInterval,
-	}
-	if cache.defaultExpiration <= 0 {
-		cache.defaultExpiration = defaultExpiration
-	}
-	if cache.gcInterval <= time.Second {
-		cache.gcInterval = defaultGCInterval
-	}
-	return &cache
-}
-
 func (c *Cache) Run(stopCh <-chan struct{}) error {
 	defer runtime.HandleCrash()
 	c.gcStarted = true

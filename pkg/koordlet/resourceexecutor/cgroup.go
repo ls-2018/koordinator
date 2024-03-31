@@ -18,6 +18,7 @@ package resourceexecutor
 
 import (
 	"fmt"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"math"
 	"os"
 	"path/filepath"
@@ -26,7 +27,6 @@ import (
 
 	"k8s.io/klog/v2"
 
-	sysutil "github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"github.com/koordinator-sh/koordinator/pkg/util/cpuset"
 )
 
@@ -41,9 +41,9 @@ const EmptyValueError string = "EmptyValueError"
 const ErrCgroupDir = "cgroup path or file not exist"
 
 // CgroupFileWriteIfDifferent writes the cgroup file if current value is different from the given value.
-func cgroupFileWriteIfDifferent(cgroupTaskDir string, r sysutil.Resource, value string) (bool, error) {
+func cgroupFileWriteIfDifferent(cgroupTaskDir string, r system.Resource, value string) (bool, error) {
 	if supported, msg := r.IsSupported(cgroupTaskDir); !supported {
-		return false, sysutil.ResourceUnsupportedErr(fmt.Sprintf("write cgroup %s failed, msg: %s", r.ResourceType(), msg))
+		return false, system.ResourceUnsupportedErr(fmt.Sprintf("write cgroup %s failed, msg: %s", r.ResourceType(), msg))
 	}
 	if valid, msg := r.IsValid(value); !valid {
 		return false, fmt.Errorf("write cgroup %s failed, value[%v] not valid, msg: %s", r.ResourceType(), value, msg)
@@ -58,7 +58,7 @@ func cgroupFileWriteIfDifferent(cgroupTaskDir string, r sysutil.Resource, value 
 	}
 	// FIXME(saintube): Instead of handling cpuset resource in writing function, we should use a updater and do
 	//  MergeUpdate in resourceexecutor's LeveledUpdateBatch.
-	if r.ResourceType() == sysutil.CPUSetCPUSName && cpuset.IsEqualStrCpus(currentValue, value) {
+	if r.ResourceType() == system.CPUSetCPUSName && cpuset.IsEqualStrCpus(currentValue, value) {
 		return false, nil
 	}
 	if value == currentValue || value == CgroupMaxValueStr && currentValue == CgroupMaxSymbolStr {
@@ -73,9 +73,9 @@ func cgroupFileWriteIfDifferent(cgroupTaskDir string, r sysutil.Resource, value 
 }
 
 // CgroupFileWrite writes the cgroup file with the given value.
-func cgroupFileWrite(cgroupTaskDir string, r sysutil.Resource, value string) error {
+func cgroupFileWrite(cgroupTaskDir string, r system.Resource, value string) error {
 	if supported, msg := r.IsSupported(cgroupTaskDir); !supported {
-		return sysutil.ResourceUnsupportedErr(fmt.Sprintf("write cgroup %s failed, msg: %s", r.ResourceType(), msg))
+		return system.ResourceUnsupportedErr(fmt.Sprintf("write cgroup %s failed, msg: %s", r.ResourceType(), msg))
 	}
 	if valid, msg := r.IsValid(value); !valid {
 		return fmt.Errorf("write cgroup %s failed, value[%v] not valid, msg: %s", r.ResourceType(), value, msg)
@@ -91,9 +91,9 @@ func cgroupFileWrite(cgroupTaskDir string, r sysutil.Resource, value string) err
 }
 
 // CgroupFileReadInt reads the cgroup file and returns an int64 value.
-func cgroupFileReadInt(cgroupTaskDir string, r sysutil.Resource) (*int64, error) {
+func cgroupFileReadInt(cgroupTaskDir string, r system.Resource) (*int64, error) {
 	if supported, msg := r.IsSupported(cgroupTaskDir); !supported {
-		return nil, sysutil.ResourceUnsupportedErr(fmt.Sprintf("read cgroup %s failed, msg: %s", r.ResourceType(), msg))
+		return nil, system.ResourceUnsupportedErr(fmt.Sprintf("read cgroup %s failed, msg: %s", r.ResourceType(), msg))
 	}
 
 	dataStr, err := cgroupFileRead(cgroupTaskDir, r)
@@ -117,9 +117,9 @@ func cgroupFileReadInt(cgroupTaskDir string, r sysutil.Resource) (*int64, error)
 }
 
 // CgroupFileRead reads the cgroup file.
-func cgroupFileRead(cgroupTaskDir string, r sysutil.Resource) (string, error) {
+func cgroupFileRead(cgroupTaskDir string, r system.Resource) (string, error) {
 	if supported, msg := r.IsSupported(cgroupTaskDir); !supported {
-		return "", sysutil.ResourceUnsupportedErr(fmt.Sprintf("read cgroup %s failed, msg: %s", r.ResourceType(), msg))
+		return "", system.ResourceUnsupportedErr(fmt.Sprintf("read cgroup %s failed, msg: %s", r.ResourceType(), msg))
 	}
 	if exist, msg := IsCgroupPathExist(cgroupTaskDir, r); !exist {
 		return "", ResourceCgroupDirErr(fmt.Sprintf("read cgroup %s failed, msg: %s", r.ResourceType(), msg))
@@ -132,7 +132,7 @@ func cgroupFileRead(cgroupTaskDir string, r sysutil.Resource) (string, error) {
 	return strings.Trim(string(data), "\n"), err
 }
 
-func readCgroupAndParseInt64(parentDir string, r sysutil.Resource) (int64, error) {
+func readCgroupAndParseInt64(parentDir string, r system.Resource) (int64, error) {
 	s, err := cgroupFileRead(parentDir, r)
 	if err != nil {
 		return -1, err
@@ -150,7 +150,7 @@ func readCgroupAndParseInt64(parentDir string, r sysutil.Resource) (int64, error
 	return v, nil
 }
 
-func readCgroupAndParseUint64(parentDir string, r sysutil.Resource) (uint64, error) {
+func readCgroupAndParseUint64(parentDir string, r system.Resource) (uint64, error) {
 	s, err := cgroupFileRead(parentDir, r)
 	if err != nil {
 		return 0, err
@@ -171,7 +171,7 @@ func readCgroupAndParseUint64(parentDir string, r sysutil.Resource) (uint64, err
 // ReadCgroupAndParseInt32Slice reads the given cgroup content and parses it into an int32 slice.
 // e.g. content: "1\n23\n0\n4\n56789" -> []int32{ 1, 23, 0, 4, 56789 }
 // TODO: refactor via Generics.
-func readCgroupAndParseInt32Slice(parentDir string, r sysutil.Resource) ([]int32, error) {
+func readCgroupAndParseInt32Slice(parentDir string, r system.Resource) ([]int32, error) {
 	s, err := cgroupFileRead(parentDir, r)
 	if err != nil {
 		return nil, err
@@ -194,15 +194,15 @@ func readCgroupAndParseInt32Slice(parentDir string, r sysutil.Resource) ([]int32
 	return values, nil
 }
 
-func IsCgroupPathExist(parentDir string, r sysutil.Resource) (bool, string) {
+func IsCgroupPathExist(parentDir string, r system.Resource) (bool, string) {
 	filePath := r.Path(parentDir)
 	cgroupDir := filepath.Dir(filePath)
-	dirExists, _ := sysutil.PathExists(cgroupDir)
+	dirExists, _ := system.PathExists(cgroupDir)
 	if !dirExists {
 		klog.V(5).Infof("cgroup directory not exist, path: %v", cgroupDir)
 		return false, "cgroup dir not exist"
 	}
-	fileExists, _ := sysutil.PathExists(filePath)
+	fileExists, _ := system.PathExists(filePath)
 	if !fileExists {
 		return false, "cgroup file not exist"
 	}

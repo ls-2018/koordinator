@@ -1,0 +1,36 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: c
+  labels:
+    app: c
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: c
+  template:
+    metadata:
+      name: pod-example
+      labels:
+        quota.scheduling.koordinator.sh/name: "quota-example"
+        quota.scheduling.koordinator.sh/preemptible: "false"
+        app: c
+    spec:
+      schedulerName: koord-scheduler
+      containers:
+      - command:
+        - "sleep"
+        - "365d"
+        image: busybox
+        name: curlimage
+        resources:
+          limits:
+            cpu: 3
+            memory: 1Gi
+          requests:
+            cpu: 3
+            memory: 1Gi
+

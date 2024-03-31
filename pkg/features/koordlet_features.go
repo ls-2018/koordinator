@@ -152,24 +152,24 @@ var (
 	DefaultKoordletFeatureGate        featuregate.FeatureGate        = DefaultMutableKoordletFeatureGate
 
 	defaultKoordletFeatureGates = map[featuregate.Feature]featuregate.FeatureSpec{
-		AuditEvents:            {Default: false, PreRelease: featuregate.Alpha},
-		AuditEventsHTTPHandler: {Default: false, PreRelease: featuregate.Alpha},
+		AuditEvents:            {Default: true, PreRelease: featuregate.Alpha},
+		AuditEventsHTTPHandler: {Default: true, PreRelease: featuregate.Alpha},
 		BECPUSuppress:          {Default: true, PreRelease: featuregate.Beta},
-		BECPUManager:           {Default: false, PreRelease: featuregate.Alpha},
-		BECPUEvict:             {Default: false, PreRelease: featuregate.Alpha},
-		BEMemoryEvict:          {Default: false, PreRelease: featuregate.Alpha},
+		BECPUManager:           {Default: true, PreRelease: featuregate.Alpha},
+		BECPUEvict:             {Default: true, PreRelease: featuregate.Alpha},
+		BEMemoryEvict:          {Default: true, PreRelease: featuregate.Alpha},
 		CPUBurst:               {Default: true, PreRelease: featuregate.Beta},
-		SystemConfig:           {Default: false, PreRelease: featuregate.Alpha},
+		SystemConfig:           {Default: true, PreRelease: featuregate.Alpha},
 		RdtResctrl:             {Default: true, PreRelease: featuregate.Beta},
-		CgroupReconcile:        {Default: false, PreRelease: featuregate.Alpha},
+		CgroupReconcile:        {Default: true, PreRelease: featuregate.Alpha},
 		NodeTopologyReport:     {Default: true, PreRelease: featuregate.Beta},
-		Accelerators:           {Default: false, PreRelease: featuregate.Alpha},
-		CPICollector:           {Default: false, PreRelease: featuregate.Alpha},
-		Libpfm4:                {Default: false, PreRelease: featuregate.Alpha},
-		PSICollector:           {Default: false, PreRelease: featuregate.Alpha},
-		BlkIOReconcile:         {Default: false, PreRelease: featuregate.Alpha},
-		ColdPageCollector:      {Default: false, PreRelease: featuregate.Alpha},
-		HugePageReport:         {Default: false, PreRelease: featuregate.Alpha},
+		Accelerators:           {Default: true, PreRelease: featuregate.Alpha},
+		CPICollector:           {Default: true, PreRelease: featuregate.Alpha},
+		Libpfm4:                {Default: true, PreRelease: featuregate.Alpha},
+		PSICollector:           {Default: true, PreRelease: featuregate.Alpha},
+		BlkIOReconcile:         {Default: true, PreRelease: featuregate.Alpha},
+		ColdPageCollector:      {Default: true, PreRelease: featuregate.Alpha},
+		HugePageReport:         {Default: true, PreRelease: featuregate.Alpha},
 	}
 )
 

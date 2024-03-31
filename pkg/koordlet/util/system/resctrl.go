@@ -589,11 +589,11 @@ func CalculateCatL3MaskValue(cbm uint, startPercent, endPercent int64) (string, 
 
 	// calculate a bit mask belonging to interval [startPercent% * ways, endPercent% * ways)
 	// eg.
-	// cbm 0x3ff ('b1111111111), start 10%, end 80%
-	// ways 10, l3Mask 0xfe ('b11111110)
-	// cbm 0x7ff ('b11111111111), start 10%, end 50%
+	// cbm 0x3ff ('b11 1111 1111), start 10%, end 80%
+	// ways 10, l3Mask 0xfe ('b1111 1110)
+	// cbm 0x7ff ('b111 1111 1111), start 10%, end 50%
 	// ways 11, l3Mask 0x3c ('b111100)
-	// cbm 0x7ff ('b11111111111), start 0%, end 30%
+	// cbm 0x7ff ('b111 1111 1111), start 0%, end 30%
 	// ways 11, l3Mask 0xf ('b1111)
 	ways := float64(bits.Len(cbm))
 	startWay := uint64(math.Ceil(ways * float64(startPercent) / 100))

@@ -27,11 +27,11 @@ import (
 
 	"github.com/koordinator-sh/koordinator/apis/extension"
 	"github.com/koordinator-sh/koordinator/pkg/features"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metriccache"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metriccache"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/framework"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/helpers"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/resourceexecutor"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
 )
 
 const (
@@ -46,8 +46,8 @@ type memoryEvictor struct {
 	evictInterval         time.Duration
 	evictCoolingInterval  time.Duration
 	metricCollectInterval time.Duration
-	statesInformer        statesinformer.StatesInformer
-	metricCache           metriccache.MetricCache
+	statesInformer        over_statesinformer.StatesInformer
+	metricCache           over_metriccache.MetricCache
 	evictor               *framework.Evictor
 	lastEvictTime         time.Time
 }
@@ -119,7 +119,7 @@ func (m *memoryEvictor) memoryEvict() {
 		return
 	}
 
-	podMetrics := helpers.CollectAllPodMetricsLast(m.statesInformer, m.metricCache, metriccache.PodMemUsageMetric, m.metricCollectInterval)
+	podMetrics := helpers.CollectAllPodMetricsLast(m.statesInformer, m.metricCache, over_metriccache.PodMemUsageMetric, m.metricCollectInterval)
 	node := m.statesInformer.GetNode()
 	if node == nil {
 		klog.Warningf("skip memory evict, Node is nil")
@@ -132,7 +132,7 @@ func (m *memoryEvictor) memoryEvict() {
 		return
 	}
 
-	queryMeta, err := metriccache.NodeMemoryUsageMetric.BuildQueryMeta(nil)
+	queryMeta, err := over_metriccache.NodeMemoryUsageMetric.BuildQueryMeta(nil)
 	if err != nil {
 		klog.Warningf("skip memory evict, get node query failed, error: %v", err)
 		return

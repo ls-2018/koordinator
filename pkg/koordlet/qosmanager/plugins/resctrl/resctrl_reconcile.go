@@ -30,11 +30,11 @@ import (
 	"github.com/koordinator-sh/koordinator/apis/extension"
 	slov1alpha1 "github.com/koordinator-sh/koordinator/apis/slo/v1alpha1"
 	"github.com/koordinator-sh/koordinator/pkg/features"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metriccache"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metriccache"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/framework"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/helpers"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/resourceexecutor"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
 	koordletutil "github.com/koordinator-sh/koordinator/pkg/koordlet/util"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"github.com/koordinator-sh/koordinator/pkg/util"
@@ -73,8 +73,8 @@ var _ framework.QOSStrategy = &resctrlReconcile{}
 type resctrlReconcile struct {
 	reconcileInterval time.Duration
 	executor          resourceexecutor.ResourceUpdateExecutor
-	statesInformer    statesinformer.StatesInformer
-	metricCache       metriccache.MetricCache
+	statesInformer    over_statesinformer.StatesInformer
+	metricCache       over_metriccache.MetricCache
 	cgroupReader      resourceexecutor.CgroupReader
 	eventRecorder     record.EventRecorder
 }
@@ -232,7 +232,7 @@ func (r *resctrlReconcile) getContainerCgroupNewTaskIds(containerParentDir strin
 	return taskIDs, nil
 }
 
-func (r *resctrlReconcile) getPodCgroupNewTaskIds(podMeta *statesinformer.PodMeta, tasksMap map[int32]struct{}) []int32 {
+func (r *resctrlReconcile) getPodCgroupNewTaskIds(podMeta *over_statesinformer.PodMeta, tasksMap map[int32]struct{}) []int32 {
 	var taskIds []int32
 
 	pod := podMeta.Pod
@@ -392,14 +392,14 @@ func (r *resctrlReconcile) reconcileRDTResctrlPolicy(qosStrategy *slov1alpha1.Re
 
 	// read cat l3 cbm
 
-	nodeCPUInfoRaw, exist := r.metricCache.Get(metriccache.NodeCPUInfoKey)
+	nodeCPUInfoRaw, exist := r.metricCache.Get(over_metriccache.NodeCPUInfoKey)
 	if !exist {
 		klog.Warning("failed to get nodeCPUInfo, not exist")
 		return
 	}
-	nodeCPUInfo, ok := nodeCPUInfoRaw.(*metriccache.NodeCPUInfo)
+	nodeCPUInfo, ok := nodeCPUInfoRaw.(*over_metriccache.NodeCPUInfo)
 	if !ok {
-		klog.Fatalf("type error, expect %T， but got %T", metriccache.NodeCPUInfo{}, nodeCPUInfoRaw)
+		klog.Fatalf("type error, expect %T， but got %T", over_metriccache.NodeCPUInfo{}, nodeCPUInfoRaw)
 	}
 	if nodeCPUInfo == nil {
 		klog.Warning("failed to get nodeCPUInfo, the value is nil")
@@ -499,25 +499,7 @@ func (r *resctrlReconcile) reconcile() {
 		return
 	}
 	nodeSLO := r.statesInformer.GetNodeSLO()
-	if nodeSLO == nil || nodeSLO.Spec.ResourceQOSStrategy == nil {
-		// do nothing if nodeSLO == nil || nodeSLO.spec.ResourceStrategy == nil
-		klog.Warningf("nodeSLO is nil %v, or nodeSLO.Spec.ResourceQOSStrategy is nil", nodeSLO == nil)
-		return
-	}
 
-	// skip if host not support resctrl
-	if support, err := system.IsSupportResctrl(); err != nil {
-		klog.Warningf("check support resctrl failed, err: %s", err)
-		return
-	} else if !support {
-		klog.V(5).Infof("resctrlReconcile skipped, cpu not support CAT/MBA")
-		return
-	}
-
-	if err := initCatResctrl(); err != nil {
-		klog.V(4).Infof("resctrlReconcile failed, cannot initialize cat resctrl group, err: %s", err)
-		return
-	}
 	r.reconcileRDTResctrlPolicy(nodeSLO.Spec.ResourceQOSStrategy)
 	r.reconcileResctrlGroups(nodeSLO.Spec.ResourceQOSStrategy)
 }

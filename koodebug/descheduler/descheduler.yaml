@@ -1,0 +1,205 @@
+apiVersion: descheduler/v1alpha2
+kind: DeschedulerConfiguration
+enableContentionProfiling: true
+enableProfiling: true
+healthzBindAddress: 0.0.0.0:10251
+metricsBindAddress: 0.0.0.0:10252
+leaderElection:
+  resourceLock: leases
+  resourceName: koord-descheduler
+  resourceNamespace: koordinator-system
+deschedulingInterval: 10s   #
+dryRun: false
+profiles:
+  - name: koord-descheduler
+    plugins:
+      deschedule:
+        disabled:
+          - name: "*"
+        enabled:
+          - name: "RemovePodsHavingTooManyRestarts"
+      balance:
+        enabled:
+      evict:
+        disabled:
+          - name: "*"
+        enabled:
+          - name: MigrationController
+    pluginConfig:
+
+#      - name: RemovePodsViolatingNodeTaints
+#        args:
+#          namespaces:
+#            disabled:
+#            enabled:
+#          labelSelector:
+#          includePreferNoSchedule: false
+#          excludedTaints:
+
+
+
+#      - name: RemovePodsHavingTooManyRestarts
+#        args:
+#          namespaces:
+#            disabled:
+#            enabled:
+#          labelSelector:
+#          podRestartThreshold: 0
+#          includingInitContainers: false
+
+
+
+#      - name: RemoveDuplicates
+#        args
+#          namespaces:
+#            disabled:
+#            enabled:
+#          excludeOwnerKinds:
+
+
+
+#    - name: RemoveFailedPods           # 处理pod 状态是 Filed的
+#      args:
+#        namespaces:
+#          disabled:
+#            - name: "*"
+#          enabled:
+#            - name: "RemoveFailedPods"
+#        labelSelector:
+#        excludeOwnerKinds:
+#          - CloneSet
+#        minPodLifetimeSeconds: 3600
+#        reasons:
+#        includingInitContainers: false
+
+
+#  - name: MigrationController # 比DefaultEvictorArgs多很多参数
+#    args:
+#      apiVersion: descheduler/v1alpha2
+#      kind: MigrationControllerArgs
+#      evictionPolicy: Eviction   # Eviction、SoftEviction、Delete
+#      namespaces:
+#        exclude:
+#          - kube-system
+#          - koordinator-system
+#      evictQPS: "10"
+#      evictBurst: 1
+##      dryRun: false
+##      maxConcurrentReconciles: 1
+##      evictFailedBarePods: false
+##      evictLocalStoragePods: false
+##      evictSystemCriticalPods: false
+##      ignorePvcPods: false
+##      priorityThreshold:
+##        name:
+##        value:
+##      labelSelector:
+##      nodeSelector: ""
+##      nodeFit: false
+##      maxMigratingPerNode: 11
+##      maxMigratingPerNamespace: 11
+##      maxMigratingPerWorkload: 11
+##      maxUnavailablePerWorkload: 11
+##      skipCheckExpectedReplicas: false
+##      objectLimiters:
+##        workload:
+##          duration: 10s
+##          maxMigrating: "10%"
+##      defaultJobMode: ”ReservationFirst“        # ReservationFirst、EvictDirectly
+##      defaultJobTTL:
+##      defaultDeleteOptions:
+##        gracePeriodSeconds: 10
+##        preconditions:
+##          uid:
+##          resourceVersion:
+##        orphanDependents: true
+##        propagationPolicy: Background           # Orphan、Background、Foreground
+##        dryRun：
+##          -
+##
+##
+##     d
+##      schedulerNames:                       # 生效的调度器
+##      arbitrationArgs:   # 仲裁
+##        enable: false
+##        interval: 10s
+##  - name: PodLifeTime                          # 存活超过一定时间，就驱逐
+##    args:
+##      maxPodLifeTimeSeconds: 1000              # 创建时间至少10s
+##      namespaces:
+##        include:
+##        exclude:
+##      labelSelector:
+##        matchLabels:
+##        matchExpressions:
+##      states:
+##        - 'Pending'
+##        - 'Failed'
+
+
+#  - name: LowNodeLoad
+#    args:
+#      apiVersion: descheduler/v1alpha2
+#      kind: LowNodeLoadArgs
+#      paused: false
+#      dryRun: false
+#      nodeFit: true
+#      numberOfNodes: 10                                       # 低负载个数大于10时，才出发驱逐
+#      nodeMetricExpirationSeconds: 180                        # 节点metric有效期
+#      evictableNamespaces:                                    # 只能设置一个
+#        exclude:
+#          - kube-system
+#          - koordinator-system
+#        include:
+#      useDeviationThresholds: true                           # low=均值-low;high=均值+high
+##      lowThresholds:
+##        cpu: 45
+##        memory: 55
+##      highThresholds:
+##        cpu: 75
+##        memory: 80
+#      resourceWeights:
+#        cpu: 1
+#        memory: 1
+#      podSelectors:
+#        - name: a1
+#          selector:
+#            matchLabels:
+#            matchExpressions:
+#      nodeSelector:
+##        matchLabels:
+##          a: b
+#      anomalyCondition:
+#        timeout: "10s"               # 异常状态的过期时间，默认为1分钟
+#        consecutiveAbnormalities: 3  # 连续出现异常的次数
+#        consecutiveNormalities: 3    # 连续出现正常的次数
+#      nodePools:                     # 配置细化
+#        - name: a1
+#          nodeSelector:              # 重叠的，第一个匹配的处理
+#            matchLabels:
+#            matchExpressions:
+#          useDeviationThresholds: false                           # 使用方差计算    计算方式，ToDo
+#          lowThresholds:
+#            cpu: 45
+#            memory: 55
+#          highThresholds:
+#            cpu: 75
+#            memory: 80
+#          resourceWeights:
+#            cpu: 1
+#            memory: 1
+#          anomalyCondition:
+#            timeout: "10s"               # 异常状态的过期时间，默认为1分钟
+#            consecutiveAbnormalities: 3  # 连续出现异常的次数
+#            consecutiveNormalities: 3    # 连续出现正常的次数
+#
+
+
+maxNoOfPodsToEvictPerNode: 300
+maxNoOfPodsToEvictPerNamespace: 300
+#nodeSelector:
+#  matchLabels:
+#    a: b
+clientConnection: #
+  #  kubeconfig: "/Users/acejilam/.kube/172.16.244.143.config"                                          #
+  kubeconfig: "/Users/acejilam/.kube/kruise"

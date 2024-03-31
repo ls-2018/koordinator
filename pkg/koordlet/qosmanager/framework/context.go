@@ -27,8 +27,8 @@ import (
 	"k8s.io/client-go/tools/record"
 	"k8s.io/klog/v2"
 
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/audit"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metrics"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_audit"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metrics"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/helpers"
 	"github.com/koordinator-sh/koordinator/pkg/util"
 	expireCache "github.com/koordinator-sh/koordinator/pkg/util/cache"
@@ -80,13 +80,13 @@ func (r *Evictor) evictPodIfNotEvicted(evictPod *corev1.Pod, node *corev1.Node, 
 
 func (r *Evictor) evictPod(evictPod *corev1.Pod, reason string, message string) bool {
 	podEvictMessage := fmt.Sprintf("evict Pod:%s/%s, reason: %s, message: %v", evictPod.Namespace, evictPod.Name, reason, message)
-	_ = audit.V(0).Pod(evictPod.Namespace, evictPod.Name).Reason(reason).Message(message).Do()
+	_ = over_audit.V(0).Pod(evictPod.Namespace, evictPod.Name).Reason(reason).Message(message).Do()
 
 	if err := util.EvictPodByVersion(context.TODO(), r.kubeClient, evictPod.Namespace, evictPod.Name, metav1.DeleteOptions{
 		GracePeriodSeconds: nil,
 		Preconditions:      metav1.NewUIDPreconditions(string(evictPod.UID))}, r.evictVersion); err == nil {
 		r.eventRecorder.Eventf(evictPod, corev1.EventTypeWarning, helpers.EvictPodSuccess, podEvictMessage)
-		metrics.RecordPodEviction(evictPod.Namespace, evictPod.Name, reason)
+		over_metrics.RecordPodEviction(evictPod.Namespace, evictPod.Name, reason)
 		klog.Infof("evict pod %v/%v success, reason: %v", evictPod.Namespace, evictPod.Name, reason)
 		return true
 	} else {

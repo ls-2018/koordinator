@@ -18,25 +18,11 @@ package plugins
 
 import (
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/framework"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/plugins/blkio"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/plugins/cgreconcile"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/plugins/cpuburst"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/plugins/cpuevict"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/plugins/cpusuppress"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/plugins/memoryevict"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/plugins/resctrl"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/plugins/sysreconcile"
 )
 
 var (
 	StrategyPlugins = map[string]framework.QOSStrategyFactory{
-		blkio.BlkIOReconcileName:               blkio.New,
-		cgreconcile.CgroupReconcileName:        cgreconcile.New,
-		cpuburst.CPUBurstName:                  cpuburst.New,
-		cpuevict.CPUEvictName:                  cpuevict.New,
-		cpusuppress.CPUSuppressName:            cpusuppress.New,
-		memoryevict.MemoryEvictName:            memoryevict.New,
-		resctrl.ResctrlReconcileName:           resctrl.New,
-		sysreconcile.SystemConfigReconcileName: sysreconcile.New,
+		resctrl.ResctrlReconcileName: resctrl.New, // ✅ 将 cgroup 中的task id 加入到  resctrl group 中
 	}
 )

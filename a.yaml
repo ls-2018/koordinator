@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: c
+  labels:
+    app: c
+spec:
+  replicas: 20
+  selector:
+    matchLabels:
+      app: c
+  template:
+    metadata:
+      name: c
+      labels:
+        app: c
+        'koordinator.sh/priority-class': 'koord-prod'
+    spec:
+      containers:
+        - name: c
+          image: centos:7
+          command:
+            - "/bin/bash"
+            - "-c"
+            - "sleep 1d"
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always

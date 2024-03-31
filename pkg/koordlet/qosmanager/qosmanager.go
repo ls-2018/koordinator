@@ -30,13 +30,13 @@ import (
 	"k8s.io/klog/v2"
 
 	koordclientset "github.com/koordinator-sh/koordinator/pkg/client/clientset/versioned"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metriccache"
-	_ "github.com/koordinator-sh/koordinator/pkg/koordlet/metrics"
-	ma "github.com/koordinator-sh/koordinator/pkg/koordlet/metricsadvisor/framework"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metriccache"
+	_ "github.com/koordinator-sh/koordinator/pkg/koordlet/over_metrics"
+	ma "github.com/koordinator-sh/koordinator/pkg/koordlet/over_metricsadvisor/over_framework"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/framework"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/plugins"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/resourceexecutor"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
 )
 
 type QOSManager interface {
@@ -49,7 +49,7 @@ type qosManager struct {
 }
 
 func NewQOSManager(cfg *framework.Config, schema *apiruntime.Scheme, kubeClient clientset.Interface, crdClient *koordclientset.Clientset, nodeName string,
-	statesInformer statesinformer.StatesInformer, metricCache metriccache.MetricCache, metricAdvisorConfig *ma.Config, evictVersion string) QOSManager {
+	statesInformer over_statesinformer.StatesInformer, metricCache over_metriccache.MetricCache, metricAdvisorConfig *ma.Config, evictVersion string) QOSManager {
 	eventBroadcaster := record.NewBroadcaster()
 	eventBroadcaster.StartRecordingToSink(&clientcorev1.EventSinkImpl{Interface: kubeClient.CoreV1().Events("")})
 	recorder := eventBroadcaster.NewRecorder(schema, corev1.EventSource{Component: "koordlet-qosManager", Host: nodeName})

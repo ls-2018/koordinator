@@ -158,18 +158,6 @@ func getCPUTurboEnabled() (bool, error) {
 func getCPUBasicInfo() (*extension.CPUBasicInfo, error) {
 	cpuBasicInfo := &extension.CPUBasicInfo{}
 	var err error
-	if cpuBasicInfo.CPUModel, err = getCPUModel(); err != nil {
-		klog.V(4).Infof("get cpu model error: %v", err)
-	}
-	if cpuBasicInfo.HyperThreadEnabled, err = getHyperThreadEnabled(); err != nil {
-		klog.V(4).Infof("get hyperthreadEnabled info error: %v", err)
-	}
-	if cpuBasicInfo.TurboEnabled, err = getCPUTurboEnabled(); err != nil {
-		klog.V(4).Infof("get TurboEnabled info error: %v", err)
-	}
-	if cpuBasicInfo.CatL3CbmMask, err = system.ReadCatL3CbmString(); err != nil {
-		klog.V(5).Infof("get l3 cache bit mask error: %v", err)
-	}
 	if cpuBasicInfo.VendorID, err = system.GetVendorIDByCPUInfo(system.GetCPUInfoPath()); err != nil {
 		klog.V(5).Infof("get cpu vendor error: %v", err)
 	}

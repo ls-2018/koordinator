@@ -19,16 +19,16 @@ package handler
 import (
 	"k8s.io/cri-api/pkg/apis/testing"
 
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 )
 
 type FakeRuntimeHandler struct {
 	fakeRuntimeService *testing.FakeRuntimeService
-	PodMetas           map[string]*statesinformer.PodMeta
+	PodMetas           map[string]*over_statesinformer.PodMeta
 }
 
 func NewFakeRuntimeHandler() ContainerRuntimeHandler {
-	return &FakeRuntimeHandler{fakeRuntimeService: testing.NewFakeRuntimeService(), PodMetas: make(map[string]*statesinformer.PodMeta)}
+	return &FakeRuntimeHandler{fakeRuntimeService: testing.NewFakeRuntimeService(), PodMetas: make(map[string]*over_statesinformer.PodMeta)}
 }
 
 func (f *FakeRuntimeHandler) StopContainer(containerID string, timeout int64) error {

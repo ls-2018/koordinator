@@ -25,10 +25,10 @@ import (
 
 	slov1alpha1 "github.com/koordinator-sh/koordinator/apis/slo/v1alpha1"
 	"github.com/koordinator-sh/koordinator/pkg/features"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/audit"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_audit"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/framework"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/resourceexecutor"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
 	sysutil "github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 )
 
@@ -38,7 +38,7 @@ const (
 
 type systemConfig struct {
 	reconcileInterval time.Duration
-	statesInformer    statesinformer.StatesInformer
+	statesInformer    over_statesinformer.StatesInformer
 	executor          resourceexecutor.ResourceUpdateExecutor
 }
 
@@ -106,7 +106,7 @@ func caculateMemoryConfig(strategy *slov1alpha1.SystemStrategy, nodeMemory int64
 		if sysutil.ValidateResourceValue(&minFreeKbytes, "", sysutil.MinFreeKbytes) {
 			valueStr := strconv.FormatInt(minFreeKbytes, 10)
 			file := sysutil.MinFreeKbytes.Path("")
-			eventHelper := audit.V(3).Node().Reason("systemConfig reconcile").Message("update calculated mem config min_free_kbytes to : %v", valueStr)
+			eventHelper := over_audit.V(3).Node().Reason("systemConfig reconcile").Message("update calculated mem config min_free_kbytes to : %v", valueStr)
 			resource, err := resourceexecutor.NewCommonDefaultUpdater(file, file, valueStr, eventHelper)
 			if err != nil {
 				return resources
@@ -118,7 +118,7 @@ func caculateMemoryConfig(strategy *slov1alpha1.SystemStrategy, nodeMemory int64
 	if sysutil.ValidateResourceValue(strategy.WatermarkScaleFactor, "", sysutil.WatermarkScaleFactor) {
 		valueStr := strconv.FormatInt(*strategy.WatermarkScaleFactor, 10)
 		file := sysutil.WatermarkScaleFactor.Path("")
-		eventHelper := audit.V(3).Node().Reason("systemConfig reconcile").Message("update calculated mem config watermark_scale_factor to : %v", valueStr)
+		eventHelper := over_audit.V(3).Node().Reason("systemConfig reconcile").Message("update calculated mem config watermark_scale_factor to : %v", valueStr)
 		resource, err := resourceexecutor.NewCommonDefaultUpdater(file, file, valueStr, eventHelper)
 		if err != nil {
 			return resources
@@ -129,7 +129,7 @@ func caculateMemoryConfig(strategy *slov1alpha1.SystemStrategy, nodeMemory int64
 	if sysutil.ValidateResourceValue(strategy.MemcgReapBackGround, "", sysutil.MemcgReapBackGround) {
 		valueStr := strconv.FormatInt(*strategy.MemcgReapBackGround, 10)
 		file := sysutil.MemcgReapBackGround.Path("")
-		eventHelper := audit.V(3).Node().Reason("systemConfig reconcile").Message("update calculated mem config reap_background to : %v", valueStr)
+		eventHelper := over_audit.V(3).Node().Reason("systemConfig reconcile").Message("update calculated mem config reap_background to : %v", valueStr)
 		resource, err := resourceexecutor.NewCommonDefaultUpdater(file, file, valueStr, eventHelper)
 		if err != nil {
 			return resources

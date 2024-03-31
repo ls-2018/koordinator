@@ -30,11 +30,11 @@ import (
 	apiext "github.com/koordinator-sh/koordinator/apis/extension"
 	slov1alpha1 "github.com/koordinator-sh/koordinator/apis/slo/v1alpha1"
 	"github.com/koordinator-sh/koordinator/pkg/features"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metriccache"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metriccache"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/framework"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/helpers"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/resourceexecutor"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
 	"github.com/koordinator-sh/koordinator/pkg/util"
 )
 
@@ -54,8 +54,8 @@ type cpuEvictor struct {
 	evictInterval         time.Duration
 	evictCoolingInterval  time.Duration
 	metricCollectInterval time.Duration
-	statesInformer        statesinformer.StatesInformer
-	metricCache           metriccache.MetricCache
+	statesInformer        over_statesinformer.StatesInformer
+	metricCache           over_metriccache.MetricCache
 	evictor               *framework.Evictor
 	lastEvictTime         time.Time
 }
@@ -138,11 +138,11 @@ func (c *cpuEvictor) calculateMilliRelease(thresholdConfig *slov1alpha1.Resource
 		return 0
 	}
 	// BECPUUsage
-	avgBECPUMilliUsage, count01 := getBECPUMetric(metriccache.BEResourceAllocationUsage, querier, queryParam.Aggregate)
+	avgBECPUMilliUsage, count01 := getBECPUMetric(over_metriccache.BEResourceAllocationUsage, querier, queryParam.Aggregate)
 	// BECPURequest
-	avgBECPUMilliRequest, count02 := getBECPUMetric(metriccache.BEResourceAllocationRequest, querier, queryParam.Aggregate)
+	avgBECPUMilliRequest, count02 := getBECPUMetric(over_metriccache.BEResourceAllocationRequest, querier, queryParam.Aggregate)
 	// BECPULimit
-	avgBECPUMilliRealLimit, count03 := getBECPUMetric(metriccache.BEResourceAllocationRealLimit, querier, queryParam.Aggregate)
+	avgBECPUMilliRealLimit, count03 := getBECPUMetric(over_metriccache.BEResourceAllocationRealLimit, querier, queryParam.Aggregate)
 
 	// CPU Satisfaction considers the allocatable when policy=evictByAllocatable.
 	avgBECPUMilliLimit := avgBECPUMilliRealLimit
@@ -179,11 +179,11 @@ func (c *cpuEvictor) calculateMilliRelease(thresholdConfig *slov1alpha1.Resource
 		return 0
 	}
 	// BECPUUsage
-	currentBECPUMilliUsage, _ := getBECPUMetric(metriccache.BEResourceAllocationUsage, querier, queryParam.Aggregate)
+	currentBECPUMilliUsage, _ := getBECPUMetric(over_metriccache.BEResourceAllocationUsage, querier, queryParam.Aggregate)
 	// BECPURequest
-	currentBECPUMilliRequest, _ := getBECPUMetric(metriccache.BEResourceAllocationRequest, querier, queryParam.Aggregate)
+	currentBECPUMilliRequest, _ := getBECPUMetric(over_metriccache.BEResourceAllocationRequest, querier, queryParam.Aggregate)
 	// BECPULimit
-	currentBECPUMilliRealLimit, _ := getBECPUMetric(metriccache.BEResourceAllocationRealLimit, querier, queryParam.Aggregate)
+	currentBECPUMilliRealLimit, _ := getBECPUMetric(over_metriccache.BEResourceAllocationRealLimit, querier, queryParam.Aggregate)
 
 	// CPU Satisfaction considers the allocatable when policy=evictByAllocatable.
 	currentBECPUMilliLimit := currentBECPUMilliRealLimit
@@ -325,7 +325,7 @@ func (c *cpuEvictor) getPodEvictInfoAndSort() []*podEvictCPUInfo {
 		if apiext.GetPodQoSClassRaw(pod) == apiext.QoSBE {
 
 			bePodInfo := &podEvictCPUInfo{pod: podMeta.Pod}
-			queryMeta, err := metriccache.PodCPUUsageMetric.BuildQueryMeta(metriccache.MetricPropertiesFunc.Pod(string(pod.UID)))
+			queryMeta, err := over_metriccache.PodCPUUsageMetric.BuildQueryMeta(over_metriccache.MetricPropertiesFunc.Pod(string(pod.UID)))
 			if err == nil {
 				result, err := helpers.CollectPodMetricLast(c.metricCache, queryMeta, c.metricCollectInterval)
 				if err == nil {
@@ -400,21 +400,21 @@ func isSatisfactionConfigValid(thresholdConfig *slov1alpha1.ResourceThresholdStr
 	return true
 }
 
-func getBECPUMetric(resouceAllocation metriccache.MetricPropertyValue, querier metriccache.Querier, aggregateType metriccache.AggregationType) (float64, int64) {
-	var properties map[metriccache.MetricProperty]string
+func getBECPUMetric(resouceAllocation over_metriccache.MetricPropertyValue, querier over_metriccache.Querier, aggregateType over_metriccache.AggregationType) (float64, int64) {
+	var properties map[over_metriccache.MetricProperty]string
 
 	switch resouceAllocation {
-	case metriccache.BEResourceAllocationUsage:
-		properties = metriccache.MetricPropertiesFunc.NodeBE(string(metriccache.BEResourceCPU), string(metriccache.BEResourceAllocationUsage))
-	case metriccache.BEResourceAllocationRequest:
-		properties = metriccache.MetricPropertiesFunc.NodeBE(string(metriccache.BEResourceCPU), string(metriccache.BEResourceAllocationRequest))
-	case metriccache.BEResourceAllocationRealLimit:
-		properties = metriccache.MetricPropertiesFunc.NodeBE(string(metriccache.BEResourceCPU), string(metriccache.BEResourceAllocationRealLimit))
+	case over_metriccache.BEResourceAllocationUsage:
+		properties = over_metriccache.MetricPropertiesFunc.NodeBE(string(over_metriccache.BEResourceCPU), string(over_metriccache.BEResourceAllocationUsage))
+	case over_metriccache.BEResourceAllocationRequest:
+		properties = over_metriccache.MetricPropertiesFunc.NodeBE(string(over_metriccache.BEResourceCPU), string(over_metriccache.BEResourceAllocationRequest))
+	case over_metriccache.BEResourceAllocationRealLimit:
+		properties = over_metriccache.MetricPropertiesFunc.NodeBE(string(over_metriccache.BEResourceCPU), string(over_metriccache.BEResourceAllocationRealLimit))
 	default:
-		properties = map[metriccache.MetricProperty]string{}
+		properties = map[over_metriccache.MetricProperty]string{}
 	}
 
-	result, err := helpers.Query(querier, metriccache.NodeBEMetric, properties)
+	result, err := helpers.Query(querier, over_metriccache.NodeBEMetric, properties)
 	if err != nil {
 		klog.Warningf("cpuEvict by ResourceSatisfaction skipped, %s queryResult error: %v", resouceAllocation, err)
 		return 0.0, 0

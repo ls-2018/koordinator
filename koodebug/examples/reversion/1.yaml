@@ -1,0 +1,40 @@
+apiVersion: scheduling.koordinator.sh/v1alpha1
+kind: Reservation
+metadata:
+  name: reservation-demo
+  labels:
+    app: demo
+    "scheduling.koordinator.sh/reservation-order": '11'
+spec:
+  template: # set resource requirements
+    namespace: default
+    spec:
+      containers:
+      - args:
+        - '-c'
+        - '1'
+        command:
+        - stress
+        image: polinux/stress
+        imagePullPolicy: Always
+        name: stress
+        resources:
+          requests:
+            cpu: 2
+      schedulerName: koord-scheduler # use koord-scheduler
+  owners: # set the owner specifications
+  - object: # owner pods whose name is `default/pod-demo-0`
+      name: pod-demo-0
+      namespace: default
+  - object:
+      name: pod-demo-1
+      namespace: default
+  - object:
+      name: pod-demo-2
+      namespace: default
+  - object:
+      name: pod-demo-3
+      namespace: default
+  ttl: 1h # set the TTL, the reservation will get expired 1 hour later
+
+#  kubectl get reservation reservation-demo -o wide

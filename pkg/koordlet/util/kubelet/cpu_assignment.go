@@ -82,18 +82,6 @@ type socketsFirst struct{ acc *cpuAccumulator }
 var _ numaOrSocketsFirstFuncs = (*numaFirst)(nil)
 var _ numaOrSocketsFirstFuncs = (*socketsFirst)(nil)
 
-// If NUMA nodes are higher in the memory hierarchy than sockets, then we take
-// from the set of NUMA Nodes as the first level.
-func (n *numaFirst) takeFullFirstLevel() {
-	n.acc.takeFullNUMANodes()
-}
-
-// If NUMA nodes are higher in the memory hierarchy than sockets, then we take
-// from the set of sockets as the second level.
-func (n *numaFirst) takeFullSecondLevel() {
-	n.acc.takeFullSockets()
-}
-
 // If NUMA nodes are higher in the memory hierarchy than sockets, then just
 // sort the NUMA nodes directly, and return them.
 func (n *numaFirst) sortAvailableNUMANodes() []int {
@@ -133,10 +121,43 @@ func (s *socketsFirst) takeFullFirstLevel() {
 	s.acc.takeFullSockets()
 }
 
+// If NUMA nodes are higher in the memory hierarchy than sockets, then we take
+// from the set of NUMA Nodes as the first level.
+func (n *numaFirst) takeFullFirstLevel() {
+	n.acc.takeFullNUMANodes()
+}
+
+func (a *cpuAccumulator) takeFullSockets() {
+	for _, socket := range a.freeSockets() {
+		cpusInSocket := a.topo.CPUDetails.CPUsInSockets(socket)
+		if !a.needs(cpusInSocket.Size()) {
+			continue
+		}
+		klog.V(4).InfoS("takeFullSockets: claiming socket", "socket", socket)
+		a.take(cpusInSocket)
+	}
+}
+func (a *cpuAccumulator) takeFullNUMANodes() {
+	for _, numa := range a.freeNUMANodes() {
+		cpusInNUMANode := a.topo.CPUDetails.CPUsInNUMANodes(numa)
+		if !a.needs(cpusInNUMANode.Size()) {
+			continue
+		}
+		klog.V(4).InfoS("takeFullNUMANodes: claiming NUMA node", "numa", numa)
+		a.take(cpusInNUMANode)
+	}
+}
+
 // If sockets are higher in the memory hierarchy than NUMA nodes, then we take
 // from the set of NUMA Nodes as the second level.
 func (s *socketsFirst) takeFullSecondLevel() {
 	s.acc.takeFullNUMANodes()
+}
+
+// If NUMA nodes are higher in the memory hierarchy than sockets, then we take
+// from the set of sockets as the second level.
+func (n *numaFirst) takeFullSecondLevel() {
+	n.acc.takeFullSockets()
 }
 
 // If sockets are higher in the memory hierarchy than NUMA nodes, then we need
@@ -301,31 +322,9 @@ func (a *cpuAccumulator) sortAvailableCPUs() []int {
 }
 
 func (a *cpuAccumulator) take(cpus cpuset.CPUSet) {
-	a.result = a.result.Union(cpus)
-	a.details = a.details.KeepOnly(a.details.CPUs().Difference(a.result))
-	a.numCPUsNeeded -= cpus.Size()
-}
-
-func (a *cpuAccumulator) takeFullNUMANodes() {
-	for _, numa := range a.freeNUMANodes() {
-		cpusInNUMANode := a.topo.CPUDetails.CPUsInNUMANodes(numa)
-		if !a.needs(cpusInNUMANode.Size()) {
-			continue
-		}
-		klog.V(4).InfoS("takeFullNUMANodes: claiming NUMA node", "numa", numa)
-		a.take(cpusInNUMANode)
-	}
-}
-
-func (a *cpuAccumulator) takeFullSockets() {
-	for _, socket := range a.freeSockets() {
-		cpusInSocket := a.topo.CPUDetails.CPUsInSockets(socket)
-		if !a.needs(cpusInSocket.Size()) {
-			continue
-		}
-		klog.V(4).InfoS("takeFullSockets: claiming socket", "socket", socket)
-		a.take(cpusInSocket)
-	}
+	a.result = a.result.Union(cpus)                                       // 保留分配结果
+	a.details = a.details.KeepOnly(a.details.CPUs().Difference(a.result)) // 剩余可以使用的 cpu 集合
+	a.numCPUsNeeded -= cpus.Size()                                        // 还需要分配的
 }
 
 func (a *cpuAccumulator) takeFullCores() {
@@ -431,7 +430,7 @@ func takeByTopologyNUMAPacked(topo *topology.CPUTopology, availableCPUs cpuset.C
 	//    requires at least a NUMA node or socket's-worth of CPUs. If NUMA
 	//    Nodes map to 1 or more sockets, pull from NUMA nodes first.
 	//    Otherwise pull from sockets first.
-	acc.numaOrSocketsFirst.takeFullFirstLevel()
+	acc.numaOrSocketsFirst.takeFullFirstLevel() // 尽可能分配整个 numa,socket ,需要申请的>= 每个numa,socket的cpu个数,     谁个数多，先分配谁
 	if acc.isSatisfied() {
 		return acc.result, nil
 	}
@@ -442,7 +441,7 @@ func takeByTopologyNUMAPacked(topo *topology.CPUTopology, availableCPUs cpuset.C
 
 	// 2. Acquire whole cores, if available and the container requires at least
 	//    a core's-worth of CPUs.
-	acc.takeFullCores()
+	acc.takeFullCores() // 分配整个物理核
 	if acc.isSatisfied() {
 		return acc.result, nil
 	}
@@ -451,6 +450,8 @@ func takeByTopologyNUMAPacked(topo *topology.CPUTopology, availableCPUs cpuset.C
 	//    on the same sockets as the whole cores we have already taken in this
 	//    allocation.
 	acc.takeRemainingCPUs()
+	// 按照 numa、socket、core 的顺序  排列 逻辑核
+	// 按照 socket、numa、core 的顺序  排列 逻辑核
 	if acc.isSatisfied() {
 		return acc.result, nil
 	}

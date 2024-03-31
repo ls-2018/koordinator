@@ -1,0 +1,22 @@
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: Title
+  labels:
+    'koordinator.sh/evict-policy': 'Delete\Eviction\SoftEviction'
+    app: Title
+spec:
+  containers:
+    - name: Title
+      imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    'koordinator.sh/evict-policy': 'Delete\Eviction\SoftEviction'
+  annotations:
+    'koordinator.sh/evict-reason': ''
+    'koordinator.sh/evict-trigger': ''

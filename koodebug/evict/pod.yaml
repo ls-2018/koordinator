@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: Title
+  labels:
+    app: Title
+  annotations:
+    'scheduling.koordinator.sh/eviction-cost': '23'
+    'scheduling.koordinator.sh/soft-eviction': 'true'
+    'descheduler.koordinator.sh/pod-arbitrating': 'true'
+spec:
+  containers:
+    - name: Title
+      image: Image
+      imagePullPolicy: IfNotPresent
+  restartPolicy: Always

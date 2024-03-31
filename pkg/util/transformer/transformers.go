@@ -29,8 +29,8 @@ import (
 
 var transformers = map[schema.GroupVersionResource]cache.TransformFunc{
 	corev1.SchemeGroupVersion.WithResource("nodes"):               TransformNode,
-	corev1.SchemeGroupVersion.WithResource("pods"):                TransformPod,
-	schedulingv1alpha1.SchemeGroupVersion.WithResource("devices"): TransformDevice,
+	corev1.SchemeGroupVersion.WithResource("pods"):                TransformPod,    // koord->k8s
+	schedulingv1alpha1.SchemeGroupVersion.WithResource("devices"): TransformDevice, // k8s->koord
 }
 
 func SetupTransformers(informerFactory informers.SharedInformerFactory, koordInformerFactory koordinformers.SharedInformerFactory) {

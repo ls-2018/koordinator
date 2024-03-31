@@ -18,12 +18,12 @@ package util
 
 import (
 	"fmt"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"os"
 	"path/filepath"
 
 	corev1 "k8s.io/api/core/v1"
 
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"github.com/koordinator-sh/koordinator/pkg/util"
 )
 

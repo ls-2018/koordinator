@@ -17,12 +17,12 @@ limitations under the License.
 package util
 
 import (
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"path/filepath"
 	"strings"
 
 	corev1 "k8s.io/api/core/v1"
 
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"github.com/koordinator-sh/koordinator/pkg/util"
 )
 

@@ -1,0 +1,23 @@
+apiVersion: scheduling.sigs.k8s.io/v1alpha1
+kind: ElasticQuota
+metadata:
+  name: quota-example
+  labels:
+    quota.scheduling.koordinator.sh/parent: ""                                    # 父级和子级的最小\最大资源 键 必须相同
+    quota.scheduling.koordinator.sh/is-parent: "false"
+    quota.scheduling.koordinator.sh/allow-lent-resource: "true"
+    quota.scheduling.koordinator.sh/tree-id: "true"
+
+  annotations:
+    quota.scheduling.koordinator.sh/shared-weight: '{"cpu":"1","memory":"1Gi"}'
+    quota.scheduling.koordinator.sh/namespaces: '["default"]'
+    #    quota.scheduling.koordinator.sh/is-root: "true"
+    #    quota.scheduling.koordinator.sh/total-resource: "true"
+#    quota.scheduling.koordinator.sh/runtime: {cpu:4, memory: 8Gi}
+spec:
+  max:
+    cpu: 6
+    memory: 6Gi
+  min:
+    cpu: 2
+    memory: 2Gi

@@ -19,6 +19,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"net"
 	"net/url"
 	"os"
@@ -28,8 +29,6 @@ import (
 
 	"google.golang.org/grpc"
 	runtimeapi "k8s.io/cri-api/pkg/apis/runtime/v1"
-
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 )
 
 var (

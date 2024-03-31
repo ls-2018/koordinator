@@ -26,8 +26,8 @@ import (
 	"k8s.io/klog/v2"
 
 	"github.com/koordinator-sh/koordinator/cmd/koord-runtime-proxy/options"
-	"github.com/koordinator-sh/koordinator/pkg/runtimeproxy/server/cri"
-	"github.com/koordinator-sh/koordinator/pkg/runtimeproxy/server/docker"
+	"github.com/koordinator-sh/koordinator/pkg/over_runtimeproxy/server/cri"
+	"github.com/koordinator-sh/koordinator/pkg/over_runtimeproxy/server/docker"
 )
 
 func main() {

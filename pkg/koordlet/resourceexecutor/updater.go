@@ -20,6 +20,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"math"
 	"regexp"
 	"strconv"
@@ -28,8 +29,7 @@ import (
 
 	"k8s.io/klog/v2"
 
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/audit"
-	sysutil "github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_audit"
 	"github.com/koordinator-sh/koordinator/pkg/util/cpuset"
 )
 
@@ -40,43 +40,43 @@ func init() {
 	// NOTE: should exclude the read-only resources, e.g. `cpu.stat`.
 	// common
 	DefaultCgroupUpdaterFactory.Register(NewCgroupUpdaterWithUpdateFunc(CgroupUpdateWithUnlimitedFunc),
-		sysutil.CPUCFSPeriodName,
-		sysutil.MemoryLimitName,
+		system.CPUCFSPeriodName,
+		system.MemoryLimitName,
 	)
 	DefaultCgroupUpdaterFactory.Register(NewCommonCgroupUpdater,
-		sysutil.CPUBurstName,
-		sysutil.CPUBVTWarpNsName,
-		sysutil.CPUIdleName,
-		sysutil.CPUTasksName,
-		sysutil.CPUProcsName,
-		sysutil.MemoryWmarkRatioName,
-		sysutil.MemoryWmarkScaleFactorName,
-		sysutil.MemoryWmarkMinAdjName,
-		sysutil.MemoryPriorityName,
-		sysutil.MemoryUsePriorityOomName,
-		sysutil.MemoryOomGroupName,
+		system.CPUBurstName,
+		system.CPUBVTWarpNsName,
+		system.CPUIdleName,
+		system.CPUTasksName,
+		system.CPUProcsName,
+		system.MemoryWmarkRatioName,
+		system.MemoryWmarkScaleFactorName,
+		system.MemoryWmarkMinAdjName,
+		system.MemoryPriorityName,
+		system.MemoryUsePriorityOomName,
+		system.MemoryOomGroupName,
 	)
 	// special cases
-	DefaultCgroupUpdaterFactory.Register(NewCgroupUpdaterWithUpdateFunc(CgroupUpdateCPUSharesFunc), sysutil.CPUSharesName)
+	DefaultCgroupUpdaterFactory.Register(NewCgroupUpdaterWithUpdateFunc(CgroupUpdateCPUSharesFunc), system.CPUSharesName)
 	DefaultCgroupUpdaterFactory.Register(NewMergeableCgroupUpdaterWithConditionFunc(CgroupUpdateWithUnlimitedFunc, MergeConditionIfCFSQuotaIsLarger),
-		sysutil.CPUCFSQuotaName,
+		system.CPUCFSQuotaName,
 	)
 	DefaultCgroupUpdaterFactory.Register(NewMergeableCgroupUpdaterIfValueLarger,
-		sysutil.MemoryMinName,
-		sysutil.MemoryLowName,
-		sysutil.MemoryHighName,
+		system.MemoryMinName,
+		system.MemoryLowName,
+		system.MemoryHighName,
 	)
 	DefaultCgroupUpdaterFactory.Register(NewMergeableCgroupUpdaterWithConditionFunc(CommonCgroupUpdateFunc, MergeConditionIfCPUSetIsLooser),
-		sysutil.CPUSetCPUSName,
+		system.CPUSetCPUSName,
 	)
 	DefaultCgroupUpdaterFactory.Register(NewBlkIOResourceUpdater,
-		sysutil.BlkioTRIopsName,
-		sysutil.BlkioTRBpsName,
-		sysutil.BlkioTWIopsName,
-		sysutil.BlkioTWBpsName,
-		sysutil.BlkioIOQoSName,
-		sysutil.BlkioIOModelName,
-		sysutil.BlkioIOWeightName,
+		system.BlkioTRIopsName,
+		system.BlkioTRBpsName,
+		system.BlkioTWIopsName,
+		system.BlkioTWBpsName,
+		system.BlkioIOQoSName,
+		system.BlkioIOModelName,
+		system.BlkioIOWeightName,
 	)
 }
 
@@ -87,7 +87,7 @@ type MergeUpdateFunc func(resource ResourceUpdater) (ResourceUpdater, error)
 type ResourceUpdater interface {
 	// Name returns the name of the resource updater
 	Name() string
-	ResourceType() sysutil.ResourceType
+	ResourceType() system.ResourceType
 	Key() string
 	Path() string
 	Value() string
@@ -99,7 +99,7 @@ type ResourceUpdater interface {
 }
 
 type CgroupResourceUpdater struct {
-	file      sysutil.Resource
+	file      system.Resource
 	parentDir string
 	value     string
 
@@ -112,14 +112,14 @@ type CgroupResourceUpdater struct {
 	// 2. update each cgroup resource by the order of layers: firstly update resources from upper to lower by merging
 	//    the new value with old value; then update resources from lower to upper with the new value.
 	mergeUpdateFunc MergeUpdateFunc
-	eventHelper     *audit.EventHelper
+	eventHelper     *over_audit.EventHelper
 }
 
 func (u *CgroupResourceUpdater) Name() string {
 	return "cgroup"
 }
 
-func (u *CgroupResourceUpdater) ResourceType() sysutil.ResourceType {
+func (u *CgroupResourceUpdater) ResourceType() system.ResourceType {
 	return u.file.ResourceType()
 }
 
@@ -139,11 +139,11 @@ func (u *CgroupResourceUpdater) update() error {
 	return u.updateFunc(u)
 }
 
-func (u *CgroupResourceUpdater) GetEventHelper() *audit.EventHelper {
+func (u *CgroupResourceUpdater) GetEventHelper() *over_audit.EventHelper {
 	return u.eventHelper
 }
 
-func (u *CgroupResourceUpdater) SetEventHelper(a *audit.EventHelper) {
+func (u *CgroupResourceUpdater) SetEventHelper(a *over_audit.EventHelper) {
 	u.eventHelper = a
 }
 
@@ -190,15 +190,15 @@ type DefaultResourceUpdater struct {
 	file                string // the real filepath
 	lastUpdateTimestamp time.Time
 	updateFunc          UpdateFunc
-	eventHelper         *audit.EventHelper
+	eventHelper         *over_audit.EventHelper
 }
 
 func (u *DefaultResourceUpdater) Name() string {
 	return "default"
 }
 
-func (u *DefaultResourceUpdater) ResourceType() sysutil.ResourceType {
-	return sysutil.ResourceType(u.file)
+func (u *DefaultResourceUpdater) ResourceType() system.ResourceType {
+	return system.ResourceType(u.file)
 }
 
 func (u *DefaultResourceUpdater) Key() string {
@@ -241,12 +241,12 @@ func (u *DefaultResourceUpdater) UpdateLastUpdateTimestamp(time time.Time) {
 }
 
 // NewCommonDefaultUpdater returns a DefaultResourceUpdater for update general files.
-func NewCommonDefaultUpdater(key string, file string, value string, e *audit.EventHelper) (ResourceUpdater, error) {
+func NewCommonDefaultUpdater(key string, file string, value string, e *over_audit.EventHelper) (ResourceUpdater, error) {
 	return NewCommonDefaultUpdaterWithUpdateFunc(key, file, value, CommonDefaultUpdateFunc, e)
 }
 
 // NewCommonDefaultUpdaterWithUpdateFunc returns a DefaultResourceUpdater for update general files with the given update function.
-func NewCommonDefaultUpdaterWithUpdateFunc(key string, file string, value string, updateFunc UpdateFunc, e *audit.EventHelper) (ResourceUpdater, error) {
+func NewCommonDefaultUpdaterWithUpdateFunc(key string, file string, value string, updateFunc UpdateFunc, e *over_audit.EventHelper) (ResourceUpdater, error) {
 	return &DefaultResourceUpdater{
 		key:         key,
 		file:        file,
@@ -256,15 +256,15 @@ func NewCommonDefaultUpdaterWithUpdateFunc(key string, file string, value string
 	}, nil
 }
 
-type NewResourceUpdaterFunc func(resourceType sysutil.ResourceType, parentDir string, value string, e *audit.EventHelper) (ResourceUpdater, error)
+type NewResourceUpdaterFunc func(resourceType system.ResourceType, parentDir string, value string, e *over_audit.EventHelper) (ResourceUpdater, error)
 
 type ResourceUpdaterFactory interface {
-	Register(g NewResourceUpdaterFunc, resourceTypes ...sysutil.ResourceType)
-	New(resourceType sysutil.ResourceType, parentDir string, value string, e *audit.EventHelper) (ResourceUpdater, error)
+	Register(g NewResourceUpdaterFunc, resourceTypes ...system.ResourceType)
+	New(resourceType system.ResourceType, parentDir string, value string, e *over_audit.EventHelper) (ResourceUpdater, error)
 }
 
-func NewCgroupUpdater(resourceType sysutil.ResourceType, parentDir string, value string, updateFunc UpdateFunc, e *audit.EventHelper) (ResourceUpdater, error) {
-	r, err := sysutil.GetCgroupResource(resourceType)
+func NewCgroupUpdater(resourceType system.ResourceType, parentDir string, value string, updateFunc UpdateFunc, e *over_audit.EventHelper) (ResourceUpdater, error) {
+	r, err := system.GetCgroupResource(resourceType)
 	if err != nil {
 		return nil, err
 	}
@@ -277,19 +277,19 @@ func NewCgroupUpdater(resourceType sysutil.ResourceType, parentDir string, value
 	}, nil
 }
 
-func NewCgroupUpdaterWithUpdateFunc(updateFn UpdateFunc) func(resourceType sysutil.ResourceType, parentDir string, value string, e *audit.EventHelper) (ResourceUpdater, error) {
-	return func(resourceType sysutil.ResourceType, parentDir string, value string, e *audit.EventHelper) (ResourceUpdater, error) {
+func NewCgroupUpdaterWithUpdateFunc(updateFn UpdateFunc) func(resourceType system.ResourceType, parentDir string, value string, e *over_audit.EventHelper) (ResourceUpdater, error) {
+	return func(resourceType system.ResourceType, parentDir string, value string, e *over_audit.EventHelper) (ResourceUpdater, error) {
 		return NewCgroupUpdater(resourceType, parentDir, value, updateFn, e)
 	}
 }
 
 // NewCommonCgroupUpdater returns a CgroupResourceUpdater for updating known cgroup resources.
-func NewCommonCgroupUpdater(resourceType sysutil.ResourceType, parentDir string, value string, e *audit.EventHelper) (ResourceUpdater, error) {
+func NewCommonCgroupUpdater(resourceType system.ResourceType, parentDir string, value string, e *over_audit.EventHelper) (ResourceUpdater, error) {
 	return NewCgroupUpdaterWithUpdateFunc(CommonCgroupUpdateFunc)(resourceType, parentDir, value, e)
 }
 
-func NewMergeableCgroupUpdaterWithCondition(resourceType sysutil.ResourceType, parentDir string, value string, updateFunc UpdateFunc, mergeCondition MergeConditionFunc, e *audit.EventHelper) (ResourceUpdater, error) {
-	r, err := sysutil.GetCgroupResource(resourceType)
+func NewMergeableCgroupUpdaterWithCondition(resourceType system.ResourceType, parentDir string, value string, updateFunc UpdateFunc, mergeCondition MergeConditionFunc, e *over_audit.EventHelper) (ResourceUpdater, error) {
+	r, err := system.GetCgroupResource(resourceType)
 	if err != nil {
 		return nil, err
 	}
@@ -305,20 +305,20 @@ func NewMergeableCgroupUpdaterWithCondition(resourceType sysutil.ResourceType, p
 	}, nil
 }
 
-func NewMergeableCgroupUpdaterWithConditionFunc(updateFn UpdateFunc, mergeCondition MergeConditionFunc) func(resourceType sysutil.ResourceType, parentDir string, value string, e *audit.EventHelper) (ResourceUpdater, error) {
-	return func(resourceType sysutil.ResourceType, parentDir string, value string, e *audit.EventHelper) (ResourceUpdater, error) {
+func NewMergeableCgroupUpdaterWithConditionFunc(updateFn UpdateFunc, mergeCondition MergeConditionFunc) func(resourceType system.ResourceType, parentDir string, value string, e *over_audit.EventHelper) (ResourceUpdater, error) {
+	return func(resourceType system.ResourceType, parentDir string, value string, e *over_audit.EventHelper) (ResourceUpdater, error) {
 		return NewMergeableCgroupUpdaterWithCondition(resourceType, parentDir, value, updateFn, mergeCondition, e)
 	}
 }
 
-func NewMergeableCgroupUpdaterIfValueLarger(resourceType sysutil.ResourceType, parentDir string, value string, e *audit.EventHelper) (ResourceUpdater, error) {
+func NewMergeableCgroupUpdaterIfValueLarger(resourceType system.ResourceType, parentDir string, value string, e *over_audit.EventHelper) (ResourceUpdater, error) {
 	return NewMergeableCgroupUpdaterWithConditionFunc(CommonCgroupUpdateFunc, MergeConditionIfValueIsLarger)(resourceType, parentDir, value, e)
 }
 
 // NewDetailCgroupUpdater returns a new *CgroupResourceUpdater according to the given Resource, which is generally used
 // for backwards compatibility. It is not guaranteed for updating successfully since it does not retrieve from the
 // known cgroup resources.
-func NewDetailCgroupUpdater(resource sysutil.Resource, parentDir string, value string, updateFunc UpdateFunc, e *audit.EventHelper) (ResourceUpdater, error) {
+func NewDetailCgroupUpdater(resource system.Resource, parentDir string, value string, updateFunc UpdateFunc, e *over_audit.EventHelper) (ResourceUpdater, error) {
 	return &CgroupResourceUpdater{
 		file:        resource,
 		parentDir:   parentDir,
@@ -330,16 +330,16 @@ func NewDetailCgroupUpdater(resource sysutil.Resource, parentDir string, value s
 
 type CgroupUpdaterFactoryImpl struct {
 	lock     sync.RWMutex
-	registry map[sysutil.ResourceType]NewResourceUpdaterFunc
+	registry map[system.ResourceType]NewResourceUpdaterFunc
 }
 
 func NewCgroupUpdaterFactory() ResourceUpdaterFactory {
 	return &CgroupUpdaterFactoryImpl{
-		registry: map[sysutil.ResourceType]NewResourceUpdaterFunc{},
+		registry: map[system.ResourceType]NewResourceUpdaterFunc{},
 	}
 }
 
-func (f *CgroupUpdaterFactoryImpl) Register(g NewResourceUpdaterFunc, resourceTypes ...sysutil.ResourceType) {
+func (f *CgroupUpdaterFactoryImpl) Register(g NewResourceUpdaterFunc, resourceTypes ...system.ResourceType) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	for _, t := range resourceTypes {
@@ -352,7 +352,7 @@ func (f *CgroupUpdaterFactoryImpl) Register(g NewResourceUpdaterFunc, resourceTy
 	}
 }
 
-func (f *CgroupUpdaterFactoryImpl) New(resourceType sysutil.ResourceType, parentDir string, value string, e *audit.EventHelper) (ResourceUpdater, error) {
+func (f *CgroupUpdaterFactoryImpl) New(resourceType system.ResourceType, parentDir string, value string, e *over_audit.EventHelper) (ResourceUpdater, error) {
 	f.lock.RLock()
 	defer f.lock.RUnlock()
 	g, ok := f.registry[resourceType]
@@ -376,8 +376,8 @@ func CgroupUpdateWithUnlimitedFunc(resource ResourceUpdater) error {
 	c := resource.(*CgroupResourceUpdater)
 	// NOTE: convert "-1" to "max", since some cgroups-v2 files only accept "max" to unlimit resource instead of "-1".
 	//       DO NOT use it on the cgroups which has a valid value of "-1".
-	if c.value == sysutil.CgroupUnlimitedSymbolStr && sysutil.GetCurrentCgroupVersion() == sysutil.CgroupVersionV2 {
-		c.value = sysutil.CgroupMaxSymbolStr
+	if c.value == system.CgroupUnlimitedSymbolStr && system.GetCurrentCgroupVersion() == system.CgroupVersionV2 {
+		c.value = system.CgroupMaxSymbolStr
 	}
 	return cgroupWriteIfDifferentWithLog(c)
 }
@@ -385,8 +385,8 @@ func CgroupUpdateWithUnlimitedFunc(resource ResourceUpdater) error {
 func CgroupUpdateCPUSharesFunc(resource ResourceUpdater) error {
 	c := resource.(*CgroupResourceUpdater)
 	// convert values in `cpu.shares` (v1) into values in `cpu.weight` (v2)
-	if sysutil.GetCurrentCgroupVersion() == sysutil.CgroupVersionV2 {
-		v, err := sysutil.ConvertCPUSharesToWeight(c.value)
+	if system.GetCurrentCgroupVersion() == system.CgroupVersionV2 {
+		v, err := system.ConvertCPUSharesToWeight(c.value)
 		if err != nil {
 			return err
 		}
@@ -430,7 +430,7 @@ func MergeFuncUpdateCgroup(resource ResourceUpdater, mergeCondition MergeConditi
 	if c.eventHelper != nil {
 		_ = c.eventHelper.Do()
 	} else {
-		_ = audit.V(3).Reason(ReasonUpdateCgroups).Message("update %v to %v", resource.Path(), resource.Value()).Do()
+		_ = over_audit.V(3).Reason(ReasonUpdateCgroups).Message("update %v to %v", resource.Path(), resource.Value()).Do()
 	}
 	klog.V(6).Infof("merge update cgroup %v with merged value[%v], original new[%v], old[%v]",
 		c.Path(), mergedValue, c.value, oldStr)
@@ -442,7 +442,7 @@ func MergeFuncUpdateCgroup(resource ResourceUpdater, mergeCondition MergeConditi
 func MergeConditionIfValueIsLarger(oldValue, newValue string) (string, bool, error) {
 	var newV, oldV int64
 	var err error
-	if newValue == sysutil.CgroupMaxSymbolStr || newValue == sysutil.CgroupUnlimitedSymbolStr {
+	if newValue == system.CgroupMaxSymbolStr || newValue == system.CgroupUnlimitedSymbolStr {
 		newV = int64(math.MaxInt64)
 	} else {
 		newV, err = strconv.ParseInt(newValue, 10, 64)
@@ -450,7 +450,7 @@ func MergeConditionIfValueIsLarger(oldValue, newValue string) (string, bool, err
 			return newValue, false, fmt.Errorf("new value is not int64, err: %v", err)
 		}
 	}
-	if oldValue == sysutil.CgroupMaxSymbolStr || oldValue == sysutil.CgroupUnlimitedSymbolStr { // compatible with cgroup valued "max"
+	if oldValue == system.CgroupMaxSymbolStr || oldValue == system.CgroupUnlimitedSymbolStr { // compatible with cgroup valued "max"
 		oldV = int64(math.MaxInt64)
 	} else {
 		oldV, err = strconv.ParseInt(oldValue, 10, 64)
@@ -464,7 +464,7 @@ func MergeConditionIfValueIsLarger(oldValue, newValue string) (string, bool, err
 func MergeConditionIfCFSQuotaIsLarger(oldValue, newValue string) (string, bool, error) {
 	var newV, oldV int64
 	var err error
-	if newValue == sysutil.CgroupMaxSymbolStr || newValue == sysutil.CgroupUnlimitedSymbolStr {
+	if newValue == system.CgroupMaxSymbolStr || newValue == system.CgroupUnlimitedSymbolStr {
 		newV = int64(math.MaxInt64)
 	} else {
 		newV, err = strconv.ParseInt(newValue, 10, 64)
@@ -474,8 +474,8 @@ func MergeConditionIfCFSQuotaIsLarger(oldValue, newValue string) (string, bool, 
 	}
 
 	// cgroup-v2 content: "max 100000", "100000 100000"
-	if sysutil.GetCurrentCgroupVersion() == sysutil.CgroupVersionV2 {
-		oldV, err = sysutil.ParseCPUCFSQuotaV2(oldValue)
+	if system.GetCurrentCgroupVersion() == system.CgroupVersionV2 {
+		oldV, err = system.ParseCPUCFSQuotaV2(oldValue)
 		if err != nil {
 			return newValue, false, fmt.Errorf("cannot parse old value %s, err: %v", oldValue, err)
 		}
@@ -483,7 +483,7 @@ func MergeConditionIfCFSQuotaIsLarger(oldValue, newValue string) (string, bool, 
 			oldV = int64(math.MaxInt64)
 		}
 	} else { // cgroup-v1 content: "-1", "100000"
-		if oldValue == sysutil.CgroupUnlimitedSymbolStr { // compatible with cgroup valued "max"
+		if oldValue == system.CgroupUnlimitedSymbolStr { // compatible with cgroup valued "max"
 			oldV = int64(math.MaxInt64)
 		} else {
 			oldV, err = strconv.ParseInt(oldValue, 10, 64)
@@ -529,20 +529,20 @@ func cgroupWriteIfDifferentWithLog(c *CgroupResourceUpdater) error {
 	if updated && c.eventHelper != nil {
 		_ = c.eventHelper.Do()
 	} else if updated {
-		_ = audit.V(3).Reason(ReasonUpdateCgroups).Message("update %v to %v", c.Path(), c.Value()).Do()
+		_ = over_audit.V(3).Reason(ReasonUpdateCgroups).Message("update %v to %v", c.Path(), c.Value()).Do()
 	}
 	return nil
 }
 
 func commonWriteIfDifferentWithLog(c *DefaultResourceUpdater) error {
-	updated, err := sysutil.CommonFileWriteIfDifferent(c.Path(), c.value)
+	updated, err := system.CommonFileWriteIfDifferent(c.Path(), c.value)
 	if err != nil {
 		return err
 	}
 	if updated && c.eventHelper != nil {
 		_ = c.eventHelper.Do()
 	} else if updated {
-		_ = audit.V(3).Reason(ReasonUpdateSystemConfig).Message("update %v to %v", c.Path(), c.Value()).Do()
+		_ = over_audit.V(3).Reason(ReasonUpdateSystemConfig).Message("update %v to %v", c.Path(), c.Value()).Do()
 	}
 	return nil
 }
@@ -552,11 +552,11 @@ func BlkIOUpdateFunc(resource ResourceUpdater) error {
 	return cgroupBlkIOFileWriteIfDifferent(info.parentDir, info.file, info.Value())
 }
 
-func NewBlkIOResourceUpdater(resourceType sysutil.ResourceType, parentDir string, value string, e *audit.EventHelper) (ResourceUpdater, error) {
+func NewBlkIOResourceUpdater(resourceType system.ResourceType, parentDir string, value string, e *over_audit.EventHelper) (ResourceUpdater, error) {
 	return NewCgroupUpdaterWithUpdateFunc(BlkIOUpdateFunc)(resourceType, parentDir, value, e)
 }
 
-func cgroupBlkIOFileWriteIfDifferent(cgroupTaskDir string, file sysutil.Resource, value string) error {
+func cgroupBlkIOFileWriteIfDifferent(cgroupTaskDir string, file system.Resource, value string) error {
 	var needUpdate bool
 	currentValue, currentErr := cgroupFileRead(cgroupTaskDir, file)
 	if currentErr != nil {
@@ -564,9 +564,9 @@ func cgroupBlkIOFileWriteIfDifferent(cgroupTaskDir string, file sysutil.Resource
 	}
 
 	switch file.ResourceType() {
-	case sysutil.BlkioIOQoSName, sysutil.BlkioIOModelName:
+	case system.BlkioIOQoSName, system.BlkioIOModelName:
 		needUpdate = CheckIfBlkRootConfigNeedUpdate(currentValue, value)
-	case sysutil.BlkioTRIopsName, sysutil.BlkioTRBpsName, sysutil.BlkioTWIopsName, sysutil.BlkioTWBpsName, sysutil.BlkioIOWeightName:
+	case system.BlkioTRIopsName, system.BlkioTRBpsName, system.BlkioTWIopsName, system.BlkioTWBpsName, system.BlkioIOWeightName:
 		needUpdate = CheckIfBlkQOSNeedUpdate(currentValue, value)
 	default:
 		return fmt.Errorf("unknown blkio resource file %s", file.ResourceType())

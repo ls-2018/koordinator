@@ -17,8 +17,8 @@ limitations under the License.
 package cgreconcile
 
 import (
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"math"
-	"strconv"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
@@ -29,13 +29,11 @@ import (
 	apiext "github.com/koordinator-sh/koordinator/apis/extension"
 	slov1alpha1 "github.com/koordinator-sh/koordinator/apis/slo/v1alpha1"
 	"github.com/koordinator-sh/koordinator/pkg/features"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/audit"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/framework"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/qosmanager/helpers"
 	"github.com/koordinator-sh/koordinator/pkg/koordlet/resourceexecutor"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
 	koordletutil "github.com/koordinator-sh/koordinator/pkg/koordlet/util"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"github.com/koordinator-sh/koordinator/pkg/util"
 	"github.com/koordinator-sh/koordinator/pkg/util/sloconfig"
 )
@@ -48,7 +46,7 @@ var _ framework.QOSStrategy = &cgroupResourcesReconcile{}
 
 type cgroupResourcesReconcile struct {
 	reconcileInterval time.Duration
-	statesInformer    statesinformer.StatesInformer
+	statesInformer    over_statesinformer.StatesInformer
 	executor          resourceexecutor.ResourceUpdateExecutor
 }
 
@@ -139,7 +137,7 @@ func (m *cgroupResourcesReconcile) calculateAndUpdateResources(nodeSLO *slov1alp
 
 // calculateResources calculates qos-level, pod-level and container-level resources with nodeCfg and podMetas
 func (m *cgroupResourcesReconcile) calculateResources(nodeCfg *slov1alpha1.ResourceQOSStrategy, node *corev1.Node,
-	podMetas []*statesinformer.PodMeta) (qosLevelResources, podLevelResources, containerLevelResources []resourceexecutor.ResourceUpdater) {
+	podMetas []*over_statesinformer.PodMeta) (qosLevelResources, podLevelResources, containerLevelResources []resourceexecutor.ResourceUpdater) {
 	// TODO: check anolis os version
 	qosSummary := map[corev1.PodQOSClass]*cgroupResourceSummary{
 		corev1.PodQOSGuaranteed: {},
@@ -163,9 +161,6 @@ func (m *cgroupResourcesReconcile) calculateResources(nodeCfg *slov1alpha1.Resou
 			klog.Errorf("failed to retrieve pod resourceQoS, err: %v", err)
 			continue
 		}
-
-		// update summary for qos resources
-		updateCgroupSummaryForQoS(qosSummary[kubeQoS], pod, mergedPodCfg)
 
 		// calculate pod-level and container-level resources and make resourceUpdaters
 		podResources, containerResources := m.calculatePodAndContainerResources(podMeta, node, mergedPodCfg)
@@ -207,7 +202,7 @@ func (m *cgroupResourcesReconcile) calculateQoSResources(summary *cgroupResource
 	return makeCgroupResources(qosDir, summary)
 }
 
-func (m *cgroupResourcesReconcile) calculatePodAndContainerResources(podMeta *statesinformer.PodMeta, node *corev1.Node,
+func (m *cgroupResourcesReconcile) calculatePodAndContainerResources(podMeta *over_statesinformer.PodMeta, node *corev1.Node,
 	podCfg *slov1alpha1.ResourceQOS) (podResources, containerResources []resourceexecutor.ResourceUpdater) {
 	pod := podMeta.Pod
 	podDir := podMeta.CgroupDir
@@ -417,34 +412,6 @@ func (m *cgroupResourcesReconcile) mergePodResourceQoSForMemoryQoS(pod *corev1.P
 	klog.V(6).Infof("get merged memory qos %v", util.DumpJSON(cfg.MemoryQOS))
 }
 
-// updateCgroupSummaryForQoS updates qos cgroup summary by pod to summarize qos-level cgroup according to belonging pods
-func updateCgroupSummaryForQoS(summary *cgroupResourceSummary, pod *corev1.Pod, podCfg *slov1alpha1.ResourceQOS) {
-	// Memory QoS
-	// `memory.min` for qos := sum(requests of pod with the qos * minLimitPercent); if factor is nil, set kernel default
-	// `memory.low` for qos := sum(requests of pod with the qos * lowLimitPercent); if factor is nil, set kernel default
-	var memRequest int64
-	// if any container's memory request is not set, just consider it as zero
-	if apiext.GetPodQoSClassRaw(pod) != apiext.QoSBE {
-		podRequest := util.GetPodRequest(pod)
-		memRequest = podRequest.Memory().Value()
-	} else {
-		memRequest = util.GetPodBEMemoryByteRequestIgnoreUnlimited(pod)
-	}
-	if podCfg.MemoryQOS.MinLimitPercent != nil {
-		if summary.memoryMin == nil {
-			summary.memoryMin = pointer.Int64(0)
-		}
-		// assert no overflow for req < 1PiB
-		*summary.memoryMin += memRequest * (*podCfg.MemoryQOS.MinLimitPercent) / 100
-	}
-	if podCfg.MemoryQOS.LowLimitPercent != nil {
-		if summary.memoryLow == nil {
-			summary.memoryLow = pointer.Int64(0)
-		}
-		*summary.memoryLow += memRequest * (*podCfg.MemoryQOS.LowLimitPercent) / 100
-	}
-}
-
 // completeCgroupSummaryForQoS completes qos cgroup summary considering Guaranteed qos is higher than the others
 func completeCgroupSummaryForQoS(qosSummary map[corev1.PodQOSClass]*cgroupResourceSummary) {
 	// memory qos
@@ -473,77 +440,4 @@ func completeCgroupSummaryForQoS(qosSummary map[corev1.PodQOSClass]*cgroupResour
 	if isMemLowGuaranteedEnabled {
 		qosSummary[corev1.PodQOSGuaranteed].memoryLow = pointer.Int64(memLowGuaranteed)
 	}
-}
-
-func makeCgroupResources(parentDir string, summary *cgroupResourceSummary) []resourceexecutor.ResourceUpdater {
-	var resources []resourceexecutor.ResourceUpdater
-
-	//Memory
-	// mergeable resources: memory.min, memory.low, memory.high
-	for _, t := range []cgroupResourceUpdaterMeta{
-		{
-			resourceType: system.MemoryMinName,
-			value:        summary.memoryMin,
-			isMergeable:  true,
-		},
-		{
-			resourceType: system.MemoryLowName,
-			value:        summary.memoryLow,
-			isMergeable:  true,
-		},
-		{
-			resourceType: system.MemoryHighName,
-			value:        summary.memoryHigh,
-			isMergeable:  true,
-		},
-		{
-			resourceType: system.MemoryWmarkRatioName,
-			value:        summary.memoryWmarkRatio,
-		},
-		{
-			resourceType: system.MemoryWmarkScaleFactorName,
-			value:        summary.memoryWmarkScaleFactor,
-		},
-		{
-			resourceType: system.MemoryWmarkMinAdjName,
-			value:        summary.memoryWmarkMinAdj,
-		},
-		// TBD: handle memory priority and oom group
-		{
-			resourceType: system.MemoryPriorityName,
-			value:        summary.memoryPriority,
-		},
-		{
-			resourceType: system.MemoryUsePriorityOomName,
-			value:        summary.memoryUsePriorityOom,
-		},
-		{
-			resourceType: system.MemoryOomGroupName,
-			value:        summary.memoryOomKillGroup,
-		},
-	} {
-		if t.value == nil {
-			continue
-		}
-		valueStr := strconv.FormatInt(*t.value, 10)
-
-		var r resourceexecutor.ResourceUpdater
-		var err error
-		if t.isMergeable {
-			eventHelper := audit.V(3).Reason("cgroup reconcile").Message("update calculated mergeable mem resources: %v to : %v", t.resourceType, valueStr)
-			r, err = resourceexecutor.NewMergeableCgroupUpdaterIfValueLarger(t.resourceType, parentDir, valueStr, eventHelper)
-		} else {
-			eventHelper := audit.V(3).Reason("cgroup reconcile").Message("update calculated mem resources: %v to : %v", t.resourceType, valueStr)
-			r, err = resourceexecutor.NewCommonCgroupUpdater(t.resourceType, parentDir, valueStr, eventHelper)
-		}
-
-		if err != nil {
-			klog.V(5).Infof("skip cgroup resources that may be unsupported, resource %s [parentDir %s, value %v], err: %v",
-				t.resourceType, parentDir, *t.value, err)
-			continue
-		}
-		resources = append(resources, r)
-	}
-
-	return resources
 }

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-demo-3 # match the owner spec of `reservation-demo`
+  labels:
+    "koordinator.sh/qosClass": "LSE"
+    "koordinator.sh/priority-class": "koord-prod"
+  annotations:
+    "scheduling.koordinator.sh/reservation-affinity": '{"reservationSelector": {"app": "demo"}}'
+spec:
+  containers:
+  - args:
+    - '-c'
+    - '1'
+    command:
+    - stress
+    image: polinux/stress
+    imagePullPolicy: Always
+    name: stress
+    resources:
+      requests:
+        cpu: 2
+  restartPolicy: Always
+  schedulerName: koord-scheduler # use koord-scheduler

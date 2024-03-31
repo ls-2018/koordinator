@@ -18,13 +18,13 @@ package resourceexecutor
 
 import (
 	"fmt"
+	sysutil "github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"sync"
 	"time"
 
 	"k8s.io/klog/v2"
 
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/metrics"
-	sysutil "github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_metrics"
 	"github.com/koordinator-sh/koordinator/pkg/util/cache"
 )
 
@@ -71,44 +71,6 @@ func (e *ResourceUpdateExecutorImpl) Update(cacheable bool, resource ResourceUpd
 		return e.updateByCache(resource)
 	}
 	return true, e.update(resource)
-}
-
-// UpdateBatch updates a batch of resources with the given cacheable attribute.
-// TODO: merge and resolve conflicts of batch updates from multiple callers.
-func (e *ResourceUpdateExecutorImpl) UpdateBatch(cacheable bool, updaters ...ResourceUpdater) {
-	failures := 0
-	if cacheable {
-		if !e.gcStarted {
-			klog.Error("failed to cacheable update resources, err: cache GC is not started")
-			return
-		}
-
-		for _, updater := range updaters {
-			isUpdated, err := e.updateByCache(updater)
-			if err != nil {
-				failures++
-				klog.V(4).Infof("failed to cacheable update resource %s to %v, isUpdated %v, err: %v",
-					updater.Key(), updater.Value(), isUpdated, err)
-				continue
-			}
-
-			klog.V(5).Infof("successfully cacheable update resource %s to %v, isUpdated %v",
-				updater.Key(), updater.Value(), isUpdated)
-		}
-	} else {
-		for _, updater := range updaters {
-			err := e.update(updater)
-			if err != nil {
-				failures++
-				klog.V(4).Infof("failed to update resource %s to %v, err: %v", updater.Key(), updater.Value(), err)
-				continue
-			}
-
-			klog.V(5).Infof("successfully update resource %s to %v", updater.Key(), updater.Value())
-		}
-	}
-	klog.V(6).Infof("finished batch updating resources, isCacheable %v, total %v, failures %v",
-		cacheable, len(updaters), failures)
 }
 
 func (e *ResourceUpdateExecutorImpl) LeveledUpdateBatch(updaters [][]ResourceUpdater) {
@@ -224,14 +186,14 @@ func (e *ResourceUpdateExecutorImpl) update(updater ResourceUpdater) error {
 	start := time.Now()
 	err := updater.update()
 	if err != nil && !e.isUpdateErrIgnored(err) {
-		metrics.RecordResourceUpdateDuration(updater.Name(), metrics.ResourceUpdateStatusFailed, metrics.SinceInSeconds(start))
+		over_metrics.RecordResourceUpdateDuration(updater.Name(), over_metrics.ResourceUpdateStatusFailed, over_metrics.SinceInSeconds(start))
 		klog.V(5).Infof("failed to update resource %s to %v, err: %v", updater.Key(), updater.Value(), err)
 		return err
 	} else if err != nil {
 		// error can be ignored
 		klog.V(5).Infof("failed to update resource %s to %v, ignored err: %v", updater.Key(), updater.Value(), err)
 	} else {
-		metrics.RecordResourceUpdateDuration(updater.Name(), metrics.ResourceUpdateStatusSuccess, metrics.SinceInSeconds(start))
+		over_metrics.RecordResourceUpdateDuration(updater.Name(), over_metrics.ResourceUpdateStatusSuccess, over_metrics.SinceInSeconds(start))
 		klog.V(6).Infof("successfully update resource %s to %v", updater.Key(), updater.Value())
 	}
 	return nil
@@ -246,11 +208,11 @@ func (e *ResourceUpdateExecutorImpl) updateByCache(updater ResourceUpdater) (boo
 			return false, nil
 		}
 		if err != nil {
-			metrics.RecordResourceUpdateDuration(updater.Name(), metrics.ResourceUpdateStatusFailed, metrics.SinceInSeconds(start))
+			over_metrics.RecordResourceUpdateDuration(updater.Name(), over_metrics.ResourceUpdateStatusFailed, over_metrics.SinceInSeconds(start))
 			klog.V(5).Infof("failed to cacheable update resource %s to %v, err: %v", updater.Key(), updater.Value(), err)
 			return false, err
 		}
-		metrics.RecordResourceUpdateDuration(updater.Name(), metrics.ResourceUpdateStatusSuccess, metrics.SinceInSeconds(start))
+		over_metrics.RecordResourceUpdateDuration(updater.Name(), over_metrics.ResourceUpdateStatusSuccess, over_metrics.SinceInSeconds(start))
 		updater.UpdateLastUpdateTimestamp(time.Now())
 		err = e.ResourceCache.SetDefault(updater.Key(), updater)
 		if err != nil {
@@ -285,4 +247,42 @@ func NewTestResourceExecutor() ResourceUpdateExecutor {
 		ResourceCache: cache.NewCacheDefault(),
 		Config:        NewDefaultConfig(),
 	}
+}
+
+// UpdateBatch updates a batch of resources with the given cacheable attribute.
+// TODO: merge and resolve conflicts of batch updates from multiple callers.
+func (e *ResourceUpdateExecutorImpl) UpdateBatch(cacheable bool, updaters ...ResourceUpdater) {
+	failures := 0
+	if cacheable {
+		if !e.gcStarted {
+			klog.Error("failed to cacheable update resources, err: cache GC is not started")
+			return
+		}
+
+		for _, updater := range updaters {
+			isUpdated, err := e.updateByCache(updater)
+			if err != nil {
+				failures++
+				klog.V(4).Infof("failed to cacheable update resource %s to %v, isUpdated %v, err: %v",
+					updater.Key(), updater.Value(), isUpdated, err)
+				continue
+			}
+
+			klog.V(5).Infof("successfully cacheable update resource %s to %v, isUpdated %v",
+				updater.Key(), updater.Value(), isUpdated)
+		}
+	} else {
+		for _, updater := range updaters {
+			err := e.update(updater)
+			if err != nil {
+				failures++
+				klog.V(4).Infof("failed to update resource %s to %v, err: %v", updater.Key(), updater.Value(), err)
+				continue
+			}
+
+			klog.V(5).Infof("successfully update resource %s to %v", updater.Key(), updater.Value())
+		}
+	}
+	klog.V(6).Infof("finished batch updating resources, isCacheable %v, total %v, failures %v",
+		cacheable, len(updaters), failures)
 }

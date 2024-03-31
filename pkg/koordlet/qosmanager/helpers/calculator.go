@@ -23,7 +23,7 @@ import (
 
 	apiext "github.com/koordinator-sh/koordinator/apis/extension"
 	slov1alpha1 "github.com/koordinator-sh/koordinator/apis/slo/v1alpha1"
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/statesinformer"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/over_statesinformer"
 	"github.com/koordinator-sh/koordinator/pkg/util"
 )
 
@@ -36,13 +36,13 @@ import (
 //   - filterHostAppUsed := sum(hostAppUsed[i] if f_hostApp(hostApp[i]))
 //   - systemdUsed := max(nodeReserved, nodeUsed - sum(podUsed[i]) - sum(hostAppUsed[i]))
 func CalculateFilterPodsUsed(nodeUsed float64, nodeReserved float64,
-	podMetas []*statesinformer.PodMeta, podUsedMap map[string]float64,
+	podMetas []*over_statesinformer.PodMeta, podUsedMap map[string]float64,
 	hostApps []slov1alpha1.HostApplicationSpec, hostAppMetrics map[string]float64,
 	podFilterFn func(*corev1.Pod) bool,
 	hostAppFilterFn func(*slov1alpha1.HostApplicationSpec) bool) (float64, float64, float64) {
 	var podsAllUsed, podsFilterUsed, hostAppsAllUsed, hostAppsFilterUsed float64
 
-	podMetaMap := map[string]*statesinformer.PodMeta{}
+	podMetaMap := map[string]*over_statesinformer.PodMeta{}
 	for _, podMeta := range podMetas {
 		podMetaMap[string(podMeta.Pod.UID)] = podMeta
 	}

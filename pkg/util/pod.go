@@ -74,12 +74,6 @@ func IsPodTerminated(pod *corev1.Pod) bool {
 }
 
 func GetCPUSetFromPod(podAnnotations map[string]string) (string, error) {
-	if podAnnotations == nil {
-		return "", nil
-	}
-	podAlloc, err := apiext.GetResourceStatus(podAnnotations)
-	if err != nil {
-		return "", err
-	}
-	return podAlloc.CPUSet, nil
+	return "", nil
+
 }

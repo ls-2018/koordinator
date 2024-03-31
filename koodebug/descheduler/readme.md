@@ -1,0 +1,17 @@
+- NewControllerRegistry
+- InnerReschedulePlugins
+
+- MigrationController
+  - pod 声明有  descheduler.alpha.kubernetes.io/evict 就认为成功
+- LowNodeLoad
+- HighNodeUtilization
+- LowNodeUtilization
+- PodLifeTime
+- RemoveFailedPods
+- RemoveDuplicates
+- RemovePodsHavingTooManyRestarts
+- RemovePodsViolatingInterPodAntiAffinity
+- RemovePodsViolatingNodeAffinity
+- RemovePodsViolatingNodeTaints
+- RemovePodsViolatingTopologySpreadConstraint
+- DefaultEvictor

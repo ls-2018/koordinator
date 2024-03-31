@@ -19,6 +19,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -27,8 +28,6 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	dclient "github.com/docker/docker/client"
-
-	"github.com/koordinator-sh/koordinator/pkg/koordlet/util/system"
 )
 
 var GetDockerClient = createDockerClient // for test
